@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.backend.policies.domain.Policy;
 import com.project.backend.policies.dto.response.PolicyListResponseDto;
 import com.project.backend.policies.dto.response.PolicyResponseDto;
+import com.project.backend.policies.repository.PolicyJdbcRepository;
 import com.project.backend.policies.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ public class PolicyService {
     @Value("${POLICY_API_KEY}")
     private String policyApiKey;
     private final PolicyRepository policyRepository;
+    private final PolicyJdbcRepository policyJdbcRepository;
 
     public void callPolicyApi() throws IOException {
         log.info("{ PolicyService } : policy api 저장");
@@ -95,7 +97,8 @@ public class PolicyService {
             policyList.add(policy);
         }
 
-        policyRepository.saveAll(policyList);
+//        policyRepository.saveAll(policyList);  // saveAll
+        policyJdbcRepository.bulkInsert(policyList);  // bulkInsert
         log.info("{ PolicyService } : policy api 저장 성공");
     }
 
