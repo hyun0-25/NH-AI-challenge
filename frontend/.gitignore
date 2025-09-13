@@ -8,6 +8,9 @@ pnpm-lock.yaml
 dist/
 build/
 
+# Vite
+.vite/
+
 # Environment
 .env
 .env.local
