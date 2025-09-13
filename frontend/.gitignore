@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+
+# Vite
+.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE / Cursor
+.vscode/
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
