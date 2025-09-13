@@ -28,6 +28,8 @@ public class Policy extends BaseEntity {
 
     private String applEdDt;
 
+    private String eduTarget;
+
     private String area1Nm;
 
     private String area2Nm;
@@ -45,13 +47,14 @@ public class Policy extends BaseEntity {
 
     private String price;
 
-    private Policy(String seq, String typeDv, String title, String contents, String applStDt, String applEdDt, String area1Nm, String area2Nm, String chargeAgency, String chargeDept, String chargeTel, String infoUrl, String totQuantity, String price) {
+    private Policy(String seq, String typeDv, String title, String contents, String applStDt, String applEdDt, String eduTarget, String area1Nm, String area2Nm, String chargeAgency, String chargeDept, String chargeTel, String infoUrl, String totQuantity, String price) {
         this.seq = seq;
         this.typeDv = typeDv;
         this.title = title;
         this.contents = contents;
         this.applStDt = applStDt;
         this.applEdDt = applEdDt;
+        this.eduTarget = eduTarget;
         this.area1Nm = area1Nm;
         this.area2Nm = area2Nm;
         this.chargeAgency = chargeAgency;
@@ -62,7 +65,7 @@ public class Policy extends BaseEntity {
         this.price = price;
     }
 
-    public static Policy createPolicy(String seq, String typeDv, String title, String contents, String applStDt, String applEdDt, String area1Nm, String area2Nm, String chargeAgency, String chargeDept, String chargeTel, String infoUrl, String totQuantity, String price) {
-        return new Policy(seq, typeDv, title, contents, applStDt, applEdDt, area1Nm, area2Nm, chargeAgency, chargeDept, chargeTel, infoUrl, totQuantity, price);
+    public static Policy createPolicy(String seq, String typeDv, String title, String contents, String applStDt, String applEdDt, String eduTarget, String area1Nm, String area2Nm, String chargeAgency, String chargeDept, String chargeTel, String infoUrl, String totQuantity, String price) {
+        return new Policy(seq, typeDv, title, contents, applStDt, applEdDt, eduTarget, area1Nm, area2Nm, chargeAgency, chargeDept, chargeTel, infoUrl, totQuantity, price);
     }
 }
