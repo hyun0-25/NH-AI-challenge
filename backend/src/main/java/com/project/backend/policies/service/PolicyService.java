@@ -82,6 +82,7 @@ public class PolicyService {
                     policyDto.contents(),
                     policyDto.applStDt(),
                     policyDto.applEdDt(),
+                    policyDto.eduTarget(),
                     policyDto.area1Nm(),
                     policyDto.area2Nm(),
                     policyDto.chargeAgency(),
