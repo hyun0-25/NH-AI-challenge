@@ -1,6 +1,7 @@
 package com.project.backend.crops.dto.response;
 
 import com.project.backend.crops.domain.CropCategory;
+import com.project.backend.crops.domain.CropVariety;
 import lombok.Builder;
 
 import java.util.List;
@@ -16,8 +17,20 @@ public record CropCategoryResponseDto(
                 .cropCategoryId(cropCategory.getCropCategoryId())
                 .cropCategoryName(cropCategory.getCropCategoryName())
                 .cropVarietyResponses(cropCategory.getCropVarieties().stream()
-                        .map(CropVarietyResponseDto::fromCropVariety) // 메서드 레퍼런스 사용
+                        .map(CropVarietyResponseDto::fromCropVariety)
                         .toList())
+                .build();
+    }
+
+    public static CropCategoryResponseDto fromCropCategoryList(CropCategory cropCategory, List<CropVariety> cropVarieties) {
+        return CropCategoryResponseDto.builder()
+                .cropCategoryId(cropCategory.getCropCategoryId())
+                .cropCategoryName(cropCategory.getCropCategoryName())
+                .cropVarietyResponses(
+                        cropVarieties.stream()
+                                .map(CropVarietyResponseDto::fromCropVariety)
+                                .toList()
+                )
                 .build();
     }
 }
