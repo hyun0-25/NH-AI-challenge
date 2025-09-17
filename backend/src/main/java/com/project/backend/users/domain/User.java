@@ -1,5 +1,6 @@
 package com.project.backend.users.domain;
 
+import com.project.backend.farm.domain.Farm;
 import com.project.backend.global.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -7,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,6 +21,9 @@ public class User extends BaseEntity {
     @GeneratedValue
     @Column(columnDefinition = "BINARY(16)", updatable = false, nullable = false)
     private UUID userId;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Farm> farms = new ArrayList<>();
 
     @Column(nullable = false)
     private String userName;

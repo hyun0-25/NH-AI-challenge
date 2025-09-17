@@ -2,7 +2,7 @@ package com.project.backend.crops.service;
 
 import com.project.backend.crops.domain.CropCategory;
 import com.project.backend.crops.dto.response.CropCategoryResponseDto;
-import com.project.backend.crops.repository.CropRepository;
+import com.project.backend.crops.repository.CropCategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class CropService {
-    private final CropRepository cropRepository;
+    private final CropCategoryRepository cropRepository;
 
     public List<CropCategoryResponseDto> getCrops() {
         log.info("{ CropService } : crops 조회");
