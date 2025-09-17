@@ -13,6 +13,7 @@ function CropSelect() {
   const navigate = useNavigate()
   const [sheetOpen, setSheetOpen] = React.useState(false)
   const [currentCropId, setCurrentCropId] = React.useState<string | null>(null)
+  const [tempSelected, setTempSelected] = React.useState<string[]>([])
   const [showSelected, setShowSelected] = React.useState(true)
   const [query, setQuery] = React.useState('')
   const [allIds, setAllIds] = React.useState<string[]>([])
@@ -70,25 +71,27 @@ function CropSelect() {
   const openSheetFor = (id: string) => {
     ensureSelected(id)
     setCurrentCropId(id)
+    const initial = (selectedSubtypes[id] || []).slice()
+    setTempSelected(initial)
     setSheetOpen(true)
   }
 
   return (
     <MobileFrame>
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-        <header className="px-4 pt-3 pb-2">
+        <header className="px-4 pt-3 pb-5">
           <BackButton />
-          <h1 className="mt-1 text-[24px] font-semibold tracking-tight">
+          <h1 className="mt-3 text-[24px] font-semibold tracking-tight">
             <span className="text-teal-700">작물</span>
             <span className="text-gray-900">을 선택해 주세요</span>
           </h1>
-          <div className="mt-1 text-[13px] text-gray-400">부류별로 품목을 선택할 수 있어요</div>
+          <div className="mt-1 text-[14px] text-gray-400">부류별로 품목을 선택할 수 있어요</div>
           <div className="mt-3">
             <input
               placeholder="품목을 입력하세요"
               value={query}
               onChange={e => setQuery(e.target.value)}
-              className="w-full bg-transparent border-b border-gray-200 h-10 px-1 text-[15px] placeholder:text-gray-400 outline-none"
+              className="w-full bg-transparent border-b border-gray-200 h-10 px-1 text-[18px] placeholder:text-gray-400 outline-none"
             />
           </div>
         </header>
@@ -98,16 +101,16 @@ function CropSelect() {
             className="w-full flex items-center justify-between px-4 py-3"
             onClick={() => setShowSelected(!showSelected)}
           >
-            <div className="text-[15px] font-medium text-gray-900">
+            <div className="text-[15px] font-bold text-gray-900">
               내가 선택한 작물
-              <span className="ml-2 inline-flex items-center justify-center text-[11px] font-bold text-white bg-teal-600 rounded-full px-2 h-5">
+              <span className="ml-2 px-3 h-4 inline-flex items-center justify-center text-[12px]  text-white bg-teal-600 rounded-full px-2 h-5">
                 {Object.values(selectedSubtypes).reduce((n, arr) => n + (arr?.length || 0), 0)}
               </span>
             </div>
             <span className={`text-xl text-gray-500 transition-transform ${showSelected ? '' : ''}`}>{showSelected ? '▴' : '▾'}</span>
           </button>
           {showSelected && (
-            <div className="px-4 pb-3 flex flex-wrap gap-8">
+            <div className="px-4 pb-5 flex flex-wrap gap-3">
               {Object.entries(selectedSubtypes).flatMap(([cropId, items]) =>
                 (items || []).map(label => (
                   <button
@@ -116,7 +119,7 @@ function CropSelect() {
                       const next = (selectedSubtypes[cropId] || []).filter(x => x !== label)
                       setSelectedSubtypes({ ...selectedSubtypes, [cropId]: next })
                     }}
-                    className="px-4 h-9 rounded-full bg-teal-600 text-white text-[13px] inline-flex items-center gap-2 shadow-sm"
+                    className="px-2 h-7 rounded-full bg-teal-600 text-white text-[13px] inline-flex items-center gap-2 shadow-sm"
                   >
                     <span>{label}</span>
                     <span className="text-white/90">×</span>
@@ -217,32 +220,56 @@ function CropSelect() {
         onClose={() => setSheetOpen(false)}
         footer={(
           <button
-            className="w-full h-12 rounded-lg bg-blue-600 text-white"
-            onClick={() => setSheetOpen(false)}
+            className="w-full h-12 rounded-none bg-teal-600 text-white"
+            onClick={() => {
+              if (!currentCropId) return
+              setSelectedSubtypes({ ...selectedSubtypes, [currentCropId]: tempSelected })
+              setSheetOpen(false)
+            }}
           >
             확인
           </button>
         )}
       >
-        <div className="flex flex-wrap gap-2 pb-4">
-          {(currentCropId ? (subtypesMap[currentCropId] || []) : []).map(label => {
-            const list = selectedSubtypes[currentCropId as string] || []
-            const on = list.includes(label)
-            return (
-              <button
-                key={label}
-                onClick={() => {
-                  const key = currentCropId as string
-                  const cur = selectedSubtypes[key] || []
-                  const next = cur.includes(label) ? cur.filter(x => x !== label) : [...cur, label]
-                  setSelectedSubtypes({ ...selectedSubtypes, [key]: next })
-                }}
-                className={`px-4 h-10 rounded-full border text-sm ${on ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700'}`}
-              >
-                {label}
-              </button>
-            )
-          })}
+        <div className="space-y-3 pb-4">
+          {/* Selected chips row */}
+          {currentCropId && tempSelected.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {tempSelected.map(sel => (
+                <button
+                  key={sel}
+                  onClick={() => {
+                    setTempSelected(tempSelected.filter(x => x !== sel))
+                  }}
+                  className="px-3 h-8 rounded-full bg-teal-600 text-white text-[15px] inline-flex items-center gap-2"
+                >
+                  <span>{sel}</span>
+                  <span className="opacity-90">×</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {/* Helper text */}
+          {(!tempSelected || tempSelected.length === 0) && (
+            <div className="text-[12px] text-gray-500">여러 작물을 선택할 수 있어요</div>
+          )}
+          {/* Options grid */}
+          <div className="grid grid-cols-2 gap-2">
+            {(currentCropId ? (subtypesMap[currentCropId] || []) : []).map(label => {
+              const on = tempSelected.includes(label)
+              return (
+                <button
+                  key={label}
+                  onClick={() => {
+                    setTempSelected(prev => (prev.includes(label) ? prev.filter(x => x !== label) : [...prev, label]))
+                  }}
+                  className={`h-10 rounded-full border text-sm ${on ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-800'} `}
+                >
+                  {label}
+                </button>
+              )
+            })}
+          </div>
         </div>
       </BottomSheet>
     </MobileFrame>
