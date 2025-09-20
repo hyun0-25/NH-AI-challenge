@@ -56,4 +56,13 @@ public class FarmController {
         return ResponseEntity.ok(farmCropResponseDtoList);
     }
 
+    @DeleteMapping("/{farmId}")
+    public ResponseEntity<FarmCropResponseDto> deleteFarm(@PathVariable Long farmId) {
+        log.info("{ FarmController } : Farm & Crops 삭제 진입");
+        log.info(" >> FarmId : " + farmId);
+        farmService.deleteFarm(farmId);
+        log.info("{ FarmController } : Farm & Crops 삭제 진입");
+        return ResponseEntity.ok().build();
+    }
+
 }

@@ -80,7 +80,7 @@ public class FarmService {
         // 농장별 작물 save
         createFarmCrop(farmCropUpdateRequestDto.cropVarietyList(), farm);
 
-        log.info("{ FarmService } : farm & crops 수정 완료");
+        log.info("{ FarmService } : farm & crops 수정 성공");
     }
 
     public FarmCropResponseDto getFarmCrop(Long farmId) {
@@ -96,7 +96,7 @@ public class FarmService {
                 cropVarietyList.add(farmCrop.getCropVariety());
         }
         List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
-        log.info("{ FarmService } : farm & crops 상세조회 완료");
+        log.info("{ FarmService } : farm & crops 상세조회 성공");
         return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
     }
 
@@ -114,8 +114,17 @@ public class FarmService {
             List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
             farmCropResponseDtos.add(FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos));
         }
-        log.info("{ FarmService } : farm & crops 리스트 조회 완료");
+        log.info("{ FarmService } : farm & crops 리스트 조회 성공");
         return farmCropResponseDtos;
+    }
+
+    public void deleteFarm(Long farmId) {
+        log.info("{ FarmService } : farm & crops 삭제");
+        Farm farm = farmRepository.findByFarmIdAndIsDeleted(farmId);
+        if (farm == null)
+            throw BaseException.type(FarmErrorCode.FARM_NOT_FOUND);
+        farm.softDelete();
+        log.info("{ FarmService } : farm & crops 삭제 성공");
     }
 
     public List<CropVariety> createFarmCrop(List<Long> farmCropVarietyList, Farm farm) {
