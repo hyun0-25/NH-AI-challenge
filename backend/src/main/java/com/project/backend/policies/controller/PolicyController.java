@@ -1,5 +1,6 @@
 package com.project.backend.policies.controller;
 
+import com.project.backend.policies.dto.response.PolicyDetailResponseDto;
 import com.project.backend.policies.dto.response.PolicyRecommendResponseDto;
 import com.project.backend.policies.service.PolicyService;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,8 @@ public class PolicyController {
 
     @GetMapping("/{farmId}/{cropId}")
     public ResponseEntity<PolicyRecommendResponseDto> getPolicyRecommend(
-        @PathVariable Long farmId,
-        @PathVariable Long cropId
+            @PathVariable Long farmId,
+            @PathVariable Long cropId
     ) {
         log.info("{ PolicyController } : policy 추천 진입");
         log.info(" >> FarmId : " + farmId);
@@ -40,6 +41,17 @@ public class PolicyController {
         PolicyRecommendResponseDto policyRecommendResponseDto = policyService.getPolicyRecommend(farmId, cropId);
         log.info("{ PolicyController } : policy 추천 성공");
         return ResponseEntity.ok(policyRecommendResponseDto);
+    }
+
+    @GetMapping("/{policyId}")
+    public ResponseEntity<PolicyDetailResponseDto> getPolicy(
+            @PathVariable Long policyId
+    ) {
+        log.info("{ PolicyController } : policy 상세조회 진입");
+        log.info(" >> PolicyId : " + policyId);
+        PolicyDetailResponseDto policyDetailResponseDto = policyService.getPolicy(policyId);
+        log.info("{ PolicyController } : policy 상세조회 성공");
+        return ResponseEntity.ok(policyDetailResponseDto);
     }
 
 }

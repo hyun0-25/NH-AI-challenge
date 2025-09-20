@@ -9,10 +9,8 @@ import com.project.backend.farm.exception.FarmErrorCode;
 import com.project.backend.farm.repository.FarmCropRepository;
 import com.project.backend.global.exception.BaseException;
 import com.project.backend.policies.domain.Policy;
-import com.project.backend.policies.dto.response.PolicyListResponseDto;
-import com.project.backend.policies.dto.response.PolicyRecommendListResponseDto;
-import com.project.backend.policies.dto.response.PolicyRecommendResponseDto;
-import com.project.backend.policies.dto.response.PolicyResponseDto;
+import com.project.backend.policies.dto.response.*;
+import com.project.backend.policies.exception.PolicyErrorCode;
 import com.project.backend.policies.repository.PolicyJdbcRepository;
 import com.project.backend.policies.repository.PolicyRepository;
 import com.project.backend.users.domain.User;
@@ -149,6 +147,18 @@ public class PolicyService {
 
         log.info("{ PolicyService } : policy 추천 조회 성공");
         return PolicyRecommendResponseDto.fromPolicyRecommend(policyRecommendList, policyOtherList);
+    }
+
+    public PolicyDetailResponseDto getPolicy(Long policyId) {
+        log.info("{ PolicyService } : policy 상세조회 성공");
+        Policy policy = policyRepository.findPolicyByPolicyId(policyId);
+        if (policy == null)
+            throw BaseException.type(PolicyErrorCode.POLICY_NOT_FOUND);
+
+        PolicyDetailResponseDto policyDetailResponseDto = PolicyDetailResponseDto.fromPolicy(policy);
+
+        log.info("{ PolicyService } : policy 상세조회 성공");
+        return policyDetailResponseDto;
     }
 
 
