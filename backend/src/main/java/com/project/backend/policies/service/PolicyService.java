@@ -41,8 +41,6 @@ import java.util.UUID;
 @Transactional
 @RequiredArgsConstructor
 public class PolicyService {
-    @Value("${FASTAPI_SERVER_URL}")
-    private String fastApiServerURL;
     @Value("${POLICY_API_KEY}")
     private String policyApiKey;
     @Value("${TEST_USER_UUID}")
@@ -150,7 +148,7 @@ public class PolicyService {
     }
 
     public PolicyDetailResponseDto getPolicy(Long policyId) {
-        log.info("{ PolicyService } : policy 상세조회 성공");
+        log.info("{ PolicyService } : policy 상세조회");
         Policy policy = policyRepository.findPolicyByPolicyId(policyId);
         if (policy == null)
             throw BaseException.type(PolicyErrorCode.POLICY_NOT_FOUND);
