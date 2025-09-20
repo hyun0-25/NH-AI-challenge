@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -46,5 +48,12 @@ public class FarmController {
         return ResponseEntity.ok(farmCropResponseDto);
     }
 
+    @GetMapping
+    public ResponseEntity<List<FarmCropResponseDto>> getAllFarmCrop() {
+        log.info("{ FarmController } : Farm & Crops 리스트 조회 진입");
+        List<FarmCropResponseDto> farmCropResponseDtoList = farmService.getAllFarmCrop();
+        log.info("{ FarmController } : Farm & Crops 리스트 조회 진입");
+        return ResponseEntity.ok(farmCropResponseDtoList);
+    }
 
 }

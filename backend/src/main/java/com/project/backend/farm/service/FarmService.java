@@ -100,6 +100,24 @@ public class FarmService {
         return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
     }
 
+    public List<FarmCropResponseDto> getAllFarmCrop() {
+        log.info("{ FarmService } : farm & crops 리스트 조회");
+        List<Farm> farms = farmRepository.findAllByFarmIdAndIsDeleted();
+        List<FarmCropResponseDto> farmCropResponseDtos = new ArrayList<>();
+        for (Farm farm : farms) {
+            List<FarmCrop> farmCrops = farm.getFarmCropList();
+            List<CropVariety> cropVarietyList = new ArrayList<>();
+            for (FarmCrop farmCrop : farmCrops) {
+                if (!farmCrop.getIsDeleted())
+                    cropVarietyList.add(farmCrop.getCropVariety());
+            }
+            List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
+            farmCropResponseDtos.add(FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos));
+        }
+        log.info("{ FarmService } : farm & crops 리스트 조회 완료");
+        return farmCropResponseDtos;
+    }
+
     public List<CropVariety> createFarmCrop(List<Long> farmCropVarietyList, Farm farm) {
         List<CropVariety> cropVarietyList = new ArrayList<>();
         boolean isRepresent = true;
