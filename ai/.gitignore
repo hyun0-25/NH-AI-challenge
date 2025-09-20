@@ -1,0 +1,5 @@
+__pycache__/
+data/
+recommend_result/
+.env
+.DS_Store
