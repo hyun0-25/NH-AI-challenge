@@ -21,6 +21,8 @@ interface Farm {
 
 function FarmManage() {
   const [farms, setFarms] = useState<Farm[]>([])
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [farmToDelete, setFarmToDelete] = useState<number | null>(null)
   const navigate = useNavigate()
   const { setSelectedVarieties, setCropsCatalog, setVarietiesMap } = useAppState()
 
@@ -78,6 +80,40 @@ function FarmManage() {
     }
   }
 
+  const handleDeleteFarm = (farmId: number) => {
+    setFarmToDelete(farmId)
+    setShowDeleteConfirm(true)
+  }
+
+  const confirmDelete = async () => {
+    if (!farmToDelete) return
+    
+    try {
+      const response = await fetch(`/api/farms/${farmToDelete}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        // 농장 목록 다시 불러오기
+        const farmsResponse = await fetch('/api/farms')
+        const farmsData = await farmsResponse.json()
+        setFarms(farmsData)
+      } else {
+        console.error('Failed to delete farm')
+      }
+    } catch (error) {
+      console.error('Error deleting farm:', error)
+    } finally {
+      setShowDeleteConfirm(false)
+      setFarmToDelete(null)
+    }
+  }
+
+  const cancelDelete = () => {
+    setShowDeleteConfirm(false)
+    setFarmToDelete(null)
+  }
+
   return (
     <MobileFrame>
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
@@ -131,7 +167,15 @@ function FarmManage() {
           {/* Farm List */}
           <div className="space-y-3 pb-20 overflow-y-auto flex-1">
             {farms.map((farm, farmIndex) => (
-              <div key={farm.farmId} className="bg-white rounded-lg p-4 shadow-md">
+              <div key={farm.farmId} className="bg-white rounded-lg p-4 shadow-md relative">
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDeleteFarm(farm.farmId)}
+                    className="absolute top-0 left-0 w-5 h-5 bg-[#4293A0] text-white rounded-full flex items-center justify-center text-lg hover:bg-[#4293A0]"
+                  >
+                    -
+                  </button>
+                  
                   <div className="flex items-center gap-3">
                   {/* Farm Image */}
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100">
@@ -156,7 +200,7 @@ function FarmManage() {
                   {/* Farm Info */}
                   <div className="flex-1">
                     <div className="text-sm font-medium text-gray-900 mb-1">
-                      {farm.farmLocation} {formatArea(farm.farmArea, farm.farmAreaUnitType)}
+                      {farm.farmLocation} 
                     </div>
                     
                     {/* Crop Chips */}
@@ -194,6 +238,48 @@ function FarmManage() {
             ))}
           </div>
         </main>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl p-0 mx-0 w-full max-w-xs flex flex-col">
+              {/* Warning Icon */}
+              <div className="flex justify-center mb-6 pt-6">
+                <div className="w-10 h-10 bg-white-500 rounded-full ring-2 ring-[#4293A0] flex items-center justify-center">
+                  <span className="text-[#4293A0] text-xl font-bold">!</span>
+                </div>
+              </div>
+              
+              {/* Title */}
+              <div className="text-center mb-3 px-6">
+                <h3 className="text-lg font-bold text-red-500">삭제</h3>
+              </div>
+              
+              {/* Question */}
+              <div className="text-center mb-6 px-6">
+                <p className="text-md text-gray-900">
+                  내 농장 <br />
+                  농장을 삭제할까요?</p>
+              </div>
+              
+              {/* Buttons */}
+              <div className="flex gap-0">
+                <button
+                  onClick={cancelDelete}
+                  className="w-1/3 h-14 bg-gray-200 text-gray-800 rounded-bl-2xl font-medium text-base"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="w-2/3 h-14 bg-[#4293A0] text-white rounded-br-2xl font-medium text-base"
+                >
+                  확인
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </MobileFrame>
   )
