@@ -8,9 +8,12 @@ import com.project.backend.crops.repository.CropVarietyRepository;
 import com.project.backend.farm.domain.Farm;
 import com.project.backend.farm.domain.FarmCrop;
 import com.project.backend.farm.dto.request.FarmCropRequestDto;
+import com.project.backend.farm.dto.request.FarmCropUpdateRequestDto;
 import com.project.backend.farm.dto.response.FarmCropResponseDto;
+import com.project.backend.farm.exception.FarmErrorCode;
 import com.project.backend.farm.repository.FarmCropRepository;
 import com.project.backend.farm.repository.FarmRepository;
+import com.project.backend.global.exception.BaseException;
 import com.project.backend.users.domain.User;
 import com.project.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +43,7 @@ public class FarmService {
     public FarmCropResponseDto createFarm(FarmCropRequestDto farmCropRequestDto) {
         log.info("{ FarmService } : farm & crops 생성");
         User user = userRepository.findByUUIDAndIsDeleted(userId);
-        Integer farmCount = farmRepository.countAllByIsDeletedIsFalse();
+        Integer farmCount = farmRepository.countAllByIsDeleted();
         Farm farm = Farm.createFarm(
                 user,
                 farmCropRequestDto.farmZipCode(),
@@ -78,6 +81,29 @@ public class FarmService {
 
         log.info("{ FarmService } : farm & crops 생성 성공");
         return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
+    }
+
+    public void updateFarmCrop(Long farmId, FarmCropUpdateRequestDto farmCropUpdateRequestDto) {
+        log.info("{ FarmService } : farm & crops 수정");
+        Farm farm = farmRepository.findByFarmIdAndIsDeleted(farmId);
+        if (farm == null)
+            throw BaseException.type(FarmErrorCode.FARM_NOT_FOUND);
+
+        List<FarmCrop> farmCrops = farmCropRepository.findFarmCropsByFarmIdAndIsDeleted(farmId);
+        for (FarmCrop farmCrop : farmCrops) {
+            farmCrop.softDelete();
+        }
+
+        List<CropVariety> cropVarietyList = new ArrayList<>();
+        boolean isRepresent = true;
+        for (Long cropVarietyId : farmCropUpdateRequestDto.cropVarietyList()) {
+            CropVariety cropVariety = cropVarietyRepository.findByCropVarietyId(cropVarietyId);
+            FarmCrop farmCrop = FarmCrop.createFarmCrop(farm, cropVariety, isRepresent);
+            isRepresent = false;
+            farmCropRepository.save(farmCrop);
+            cropVarietyList.add(cropVariety);
+        }
+        log.info("{ FarmService } : farm & crops 수정 완료");
     }
 
 }
