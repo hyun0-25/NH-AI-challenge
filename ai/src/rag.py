@@ -1,4 +1,5 @@
 import os
+import click
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
@@ -81,11 +82,18 @@ def rag_chain(query: str, doc_name: str):
     return output
 
 
-if __name__ == "__main__":
-
-    query = "청년 농부에게 추천할 금융 상품을 알려주세요"
-    doc_name = "finance"
-
-    rag_response = rag_chain(query=query, doc_name=doc_name)
-
+@click.command()
+@click.option('--query', '-q', required=True, help='사용자 질문')
+@click.option('--doc-name', '-d', required=True,
+              type=click.Choice(['finance', 'policy', 'insurance']),
+              help='문서 이름 (finance/policy/insurance)')
+@click.option('--persona-info', '-p', required=True, help='사용자 정보')
+def main(query: str, doc_name: str, persona_info: str):
+    """RAG 체인을 실행하여 질문에 대한 답변을 생성합니다."""
+    rag_query = f"{persona_info}\n{query}"
+    rag_response = rag_chain(query=rag_query, doc_name=doc_name)
     print(rag_response)
+
+
+if __name__ == "__main__":
+    main()
