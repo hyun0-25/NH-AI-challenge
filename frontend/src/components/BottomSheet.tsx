@@ -20,7 +20,7 @@ function BottomSheet({ open, title, onClose, children, footer }: Props) {
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
       <div className="absolute inset-x-0 bottom-0 bg-white rounded-t-3xl flex flex-col" style={{maxHeight: '50%'}}>
         <div className="relative px-5 py-3 border-b">
-          <div className="text-base font-semibold text-center">{title}</div>
+          <div className="text-lg font-semibold text-center">{title}</div>
           <button aria-label="close" onClick={onClose} className="absolute right-5 top-2 text-2xl leading-none">×</button>
         </div>
         <div className="flex-1 overflow-auto px-5 py-3">

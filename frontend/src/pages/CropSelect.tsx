@@ -9,7 +9,7 @@ import BackButton from '../components/BackButton'
 // now imported from data
 
 function CropSelect() {
-  const { selectedCrops, setSelectedCrops, selectedSubtypes, setSelectedSubtypes, cropsCatalog, setCropsCatalog } = useAppState()
+  const { selectedCrops, setSelectedCrops, selectedVarieties, setSelectedVarieties, cropsCatalog, setCropsCatalog, varietiesMap, setVarietiesMap } = useAppState()
   const navigate = useNavigate()
   const [sheetOpen, setSheetOpen] = React.useState(false)
   const [currentCropId, setCurrentCropId] = React.useState<string | null>(null)
@@ -17,7 +17,6 @@ function CropSelect() {
   const [showSelected, setShowSelected] = React.useState(true)
   const [query, setQuery] = React.useState('')
   const [allIds, setAllIds] = React.useState<string[]>([])
-  const [subtypesMap, setSubtypesMap] = React.useState<Record<string, string[]>>({})
 
   React.useEffect(() => {
     const load = async () => {
@@ -27,16 +26,16 @@ function CropSelect() {
         const rows: any[] = await res.json()
         if (!Array.isArray(rows)) throw new Error('Invalid payload')
         const catalog: Record<string, { name: string; emoji: string }> = {}
-        const sMap: Record<string, string[]> = {}
         const ids: string[] = []
         rows.forEach(row => {
           const id = String(row.cropCategoryId)
           catalog[id] = { name: row.cropCategoryName, emoji: '🌱' }
           ids.push(id)
-          sMap[id] = (row.cropVarietyResponses || []).map((v: any) => v.cropVarietyName)
+          const list = (row.cropVarietyResponses || [])
+          // store ids and names in global map
+          setVarietiesMap((prev: Record<string, { id: number; name: string }[]>) => ({ ...prev, [id]: list.map((v: any) => ({ id: v.cropVarietyId, name: v.cropVarietyName })) }))
         })
         setCropsCatalog(catalog)
-        setSubtypesMap(sMap)
         setAllIds(ids)
       } catch (err) {
         console.error('[CropSelect] Failed to load crops:', err)
@@ -46,13 +45,13 @@ function CropSelect() {
           '2': { name: '맥류', emoji: '🌾' },
           '3': { name: '두류', emoji: '🫘' },
         }
-        const demoSubtypes: Record<string, string[]> = {
-          '1': ['쌀(벼)', '찹쌀'],
-          '2': ['귀리', '보리', '호밀'],
-          '3': ['강낭콩', '완두', '콩'],
+        const demoVarieties: Record<string, { id: number; name: string }[]> = {
+          '1': [{ id: 1, name: '쌀(벼)' }, { id: 2, name: '찹쌀' }],
+          '2': [{ id: 3, name: '귀리' }, { id: 4, name: '보리' }, { id: 5, name: '호밀' }],
+          '3': [{ id: 6, name: '강낭콩' }, { id: 7, name: '완두' }, { id: 8, name: '콩' }],
         }
         setCropsCatalog(demoCatalog)
-        setSubtypesMap(demoSubtypes)
+        setVarietiesMap(demoVarieties)
         setAllIds(Object.keys(demoCatalog))
       }
     }
@@ -65,13 +64,13 @@ function CropSelect() {
       const meta = cropsCatalog[id] || { name: id, emoji: '🌾' }
       setSelectedCrops([...selectedCrops, { id, name: meta.name, emoji: meta.emoji }])
     }
-    if (!selectedSubtypes[id]) setSelectedSubtypes({ ...selectedSubtypes, [id]: [] })
+    if (!selectedVarieties[id]) setSelectedVarieties({ ...selectedVarieties, [id]: [] })
   }
 
   const openSheetFor = (id: string) => {
     ensureSelected(id)
     setCurrentCropId(id)
-    const initial = (selectedSubtypes[id] || []).slice()
+    const initial = (selectedVarieties[id] || []).map(String)
     setTempSelected(initial)
     setSheetOpen(true)
   }
@@ -104,24 +103,24 @@ function CropSelect() {
             <div className="text-[15px] font-bold text-gray-900">
               내가 선택한 작물
               <span className="ml-2 px-3 h-4 inline-flex items-center justify-center text-[12px]  text-white bg-teal-600 rounded-full px-2 h-5">
-                {Object.values(selectedSubtypes).reduce((n, arr) => n + (arr?.length || 0), 0)}
+                {Object.values(selectedVarieties).reduce((n, arr) => n + (arr?.length || 0), 0)}
               </span>
             </div>
             <span className={`text-xl text-gray-500 transition-transform ${showSelected ? '' : ''}`}>{showSelected ? '▴' : '▾'}</span>
           </button>
           {showSelected && (
             <div className="px-4 pb-5 flex flex-wrap gap-3">
-              {Object.entries(selectedSubtypes).flatMap(([cropId, items]) =>
-                (items || []).map(label => (
+              {Object.entries(selectedVarieties).flatMap(([cropId, ids]) =>
+                (ids || []).map(varId => (
                   <button
-                    key={`${cropId}-${label}`}
+                    key={`${cropId}-${varId}`}
                     onClick={() => {
-                      const next = (selectedSubtypes[cropId] || []).filter(x => x !== label)
-                      setSelectedSubtypes({ ...selectedSubtypes, [cropId]: next })
+                      const next = (selectedVarieties[cropId] || []).filter(x => x !== varId)
+                      setSelectedVarieties({ ...selectedVarieties, [cropId]: next })
                     }}
                     className="px-2 h-7 rounded-full bg-teal-600 text-white text-[13px] inline-flex items-center gap-2 shadow-sm"
                   >
-                    <span>{label}</span>
+                    <span>{(varietiesMap[cropId] || []).find(v => v.id === varId)?.name || ''}</span>
                     <span className="text-white/90">×</span>
                   </button>
                 ))
@@ -137,32 +136,32 @@ function CropSelect() {
             <div className="px-4 mt-3 space-y-2">
               {(() => {
                 const q = query.trim()
-                const results: { cropId: string; label: string }[] = []
-                Object.entries(subtypesMap).forEach(([cropId, list]) => {
-                  list.forEach(label => {
-                    if (label.includes(q)) results.push({ cropId, label })
+                const results: { cropId: string; varietyId: number; name: string }[] = []
+                Object.entries(varietiesMap).forEach(([cropId, list]) => {
+                  list.forEach(v => {
+                    if (v.name.includes(q)) results.push({ cropId, varietyId: v.id, name: v.name })
                   })
                 })
                 return (
                   <>
                     <div className="text-sm text-gray-700">총 {results.length}개</div>
                     <div className="bg-white rounded-xl divide-y">
-                      {results.map(({ cropId, label }) => {
+                      {results.map(({ cropId, varietyId, name }) => {
                         const category = (cropsCatalog[cropId]?.name) || ''
-                        const on = (selectedSubtypes[cropId] || []).includes(label)
+                        const on = (selectedVarieties[cropId] || []).includes(varietyId)
                         return (
                           <button
-                            key={`${cropId}-${label}`}
+                            key={`${cropId}-${varietyId}`}
                             onClick={() => {
                               ensureSelected(cropId)
-                              const cur = selectedSubtypes[cropId] || []
-                              const next = on ? cur.filter(x => x !== label) : [...cur, label]
-                              setSelectedSubtypes({ ...selectedSubtypes, [cropId]: next })
+                              const cur = selectedVarieties[cropId] || []
+                              const next = on ? cur.filter(x => x !== varietyId) : [...cur, varietyId]
+                              setSelectedVarieties({ ...selectedVarieties, [cropId]: next })
                             }}
                             className="w-full py-4 px-3 flex items-center justify-between"
                           >
-                            <span className="text-base text-gray-800"><span className="font-medium">{category}</span> &gt; {label}</span>
-                            <span className={`text-xl ${on ? 'text-blue-600' : 'text-gray-300'}`}>✓</span>
+                            <span className="text-base text-gray-800"><span className="font-medium">{category}</span> &gt; {name}</span>
+                            <span className={`text-xl ${on ? 'text-teal-600' : 'text-gray-300'}`}>✓</span>
                           </button>
                         )
                       })}
@@ -181,24 +180,48 @@ function CropSelect() {
           )}
           {allIds.map((id, idx) => {
             const crop = { id, name: (cropsCatalog[id]?.name) || id, emoji: (cropsCatalog[id]?.emoji) || '🌱' }
-            const active = (selectedSubtypes[crop.id] || []).length > 0
-            const count = (selectedSubtypes[crop.id] || []).length
+            const active = (selectedVarieties[crop.id] || []).length > 0
+            const count = (selectedVarieties[crop.id] || []).length
             const pastel = ['bg-[#EAF4FF]','bg-[#FFF4E6]','bg-[#F3E8FF]','bg-[#EAFBF5]','bg-[#FFEFF3]'][(idx)%5]
+            
+            // 이미지 파일명 매칭
+            const getImageSrc = (cropName: string) => {
+              return new URL(`../images/${cropName}.png`, import.meta.url).href
+            }
+            
+            const imageSrc = getImageSrc(crop.name)
+            
             return (
               <button
                 key={crop.id}
                 onClick={() => openSheetFor(crop.id)}
                 className={`relative flex flex-col items-center justify-center text-sm transition py-2`}
               >
-                <div className={`w-16 h-16 rounded-full ${pastel} flex items-center justify-center relative ${active ? 'ring-2 ring-blue-600' : ''}`}>
-                  <div className="text-xl">{crop.emoji}</div>
+                <div className={`w-16 h-16 rounded-full ${pastel} flex items-center justify-center relative ${active ? 'ring-2 ring-teal-600' : ''}`}>
+                  <img 
+                    src={imageSrc} 
+                    alt={crop.name}
+                    className="w-12 h-12 object-contain"
+                    onError={(e) => {
+                      // 이미지 로드 실패 시 이모지로 대체
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      const parent = target.parentElement
+                      if (parent) {
+                        const emojiDiv = document.createElement('div')
+                        emojiDiv.className = 'text-xl'
+                        emojiDiv.textContent = crop.emoji
+                        parent.appendChild(emojiDiv)
+                      }
+                    }}
+                  />
                   {count > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-[10px] font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+                    <span className="absolute -top-3 bg-teal-600 text-white text-[10px] font-semibold rounded-full w-7 h-5 flex items-center justify-center">
                       {count}
                     </span>
                   )}
                 </div>
-                <div className="mt-2 text-[12px] text-gray-700">{crop.name}</div>
+                <div className="mt-2 text-[13px]">{crop.name}</div>
               </button>
             )
           })}
@@ -207,8 +230,13 @@ function CropSelect() {
         </div>
         <div className="mt-auto p-0">
           <button
+            disabled={Object.values(selectedVarieties).reduce((total, arr) => total + (arr?.length || 0), 0) === 0}
             onClick={() => navigate('/summary')}
-            className="w-full bg-teal-600 text-white h-12 rounded-none"
+            className={`w-full h-12 rounded-none ${
+              Object.values(selectedVarieties).reduce((total, arr) => total + (arr?.length || 0), 0) === 0
+                ? 'bg-gray-200 text-gray-400'
+                : 'bg-teal-600 text-white'
+            }`}
           >
             다음
           </button>
@@ -223,7 +251,7 @@ function CropSelect() {
             className="w-full h-12 rounded-none bg-teal-600 text-white"
             onClick={() => {
               if (!currentCropId) return
-              setSelectedSubtypes({ ...selectedSubtypes, [currentCropId]: tempSelected })
+              setSelectedVarieties({ ...selectedVarieties, [currentCropId]: tempSelected.map(Number) })
               setSheetOpen(false)
             }}
           >
@@ -241,9 +269,9 @@ function CropSelect() {
                   onClick={() => {
                     setTempSelected(tempSelected.filter(x => x !== sel))
                   }}
-                  className="px-3 h-8 rounded-full bg-teal-600 text-white text-[15px] inline-flex items-center gap-2"
+                  className="px-3 h-8 rounded-full bg-teal-600 text-white text-[12px] inline-flex items-center gap-2"
                 >
-                  <span>{sel}</span>
+                  <span>{(varietiesMap[currentCropId] || []).find(v => v.id === Number(sel))?.name || sel}</span>
                   <span className="opacity-90">×</span>
                 </button>
               ))}
@@ -251,21 +279,21 @@ function CropSelect() {
           )}
           {/* Helper text */}
           {(!tempSelected || tempSelected.length === 0) && (
-            <div className="text-[12px] text-gray-500">여러 작물을 선택할 수 있어요</div>
+            <div className="text-[13px] text-gray-500">여러 작물을 선택할 수 있어요</div>
           )}
           {/* Options grid */}
           <div className="grid grid-cols-2 gap-2">
-            {(currentCropId ? (subtypesMap[currentCropId] || []) : []).map(label => {
-              const on = tempSelected.includes(label)
+            {(currentCropId ? (varietiesMap[currentCropId] || []) : []).map(v => {
+              const on = tempSelected.includes(String(v.id))
               return (
                 <button
-                  key={label}
+                  key={v.id}
                   onClick={() => {
-                    setTempSelected(prev => (prev.includes(label) ? prev.filter(x => x !== label) : [...prev, label]))
+                    setTempSelected(prev => (prev.includes(String(v.id)) ? prev.filter(x => x !== String(v.id)) : [...prev, String(v.id)]))
                   }}
                   className={`h-10 rounded-full border text-sm ${on ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-800'} `}
                 >
-                  {label}
+                  {v.name}
                 </button>
               )
             })}

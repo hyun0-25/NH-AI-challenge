@@ -4,7 +4,7 @@ import MobileFrame from '../components/MobileFrame'
 import { useAppState } from '../App'
 
 function Dashboard() {
-  const { selectedSubtypes, cropOrder } = useAppState()
+  const { selectedVarieties, cropOrder, varietiesMap } = useAppState()
   const entries = cropOrder
     .map(id => ({ id, name: (useAppState().cropsCatalog[id]?.name) || id, emoji: (useAppState().cropsCatalog[id]?.emoji) || '🌱' }))
 
@@ -29,12 +29,15 @@ function Dashboard() {
                   <div className="text-2xl">{crop.emoji}</div>
                   <div className="mt-2 text-sm font-medium">{crop.name}</div>
                   <div className="mt-1 text-[11px] opacity-80 line-clamp-2">
-                    {(selectedSubtypes[crop.id] || []).join(', ')}
+                    {(selectedVarieties[crop.id] || [])
+                      .map(id => (varietiesMap[crop.id] || []).find(v => v.id === id)?.name || '')
+                      .filter(Boolean)
+                      .join(', ')}
                   </div>
                 </div>
               )
             })}
-            <Link to="/manage" className="w-28 rounded-xl p-3 bg-white shadow flex items-center justify-center text-2xl">+</Link>
+            <Link to="/address" className="w-28 rounded-xl p-3 bg-white shadow flex items-center justify-center text-2xl">+</Link>
           </div>
 
           <div className="space-y-2">
