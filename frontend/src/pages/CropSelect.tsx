@@ -33,7 +33,7 @@ function CropSelect() {
           ids.push(id)
           const list = (row.cropVarietyResponses || [])
           // store ids and names in global map
-          setVarietiesMap((prev: Record<string, { id: number; name: string }[]>) => ({ ...prev, [id]: list.map((v: any) => ({ id: v.cropVarietyId, name: v.cropVarietyName })) }))
+          setVarietiesMap((prev: Record<string, { id: number; name: string }[]>) => ({ ...prev, [id]: list.map((v: any) => ({ id: v.cropVarietyId, name: v.cropVarietyName })) } as Record<string, { id: number; name: string }[]>))
         })
         setCropsCatalog(catalog)
         setAllIds(ids)
@@ -81,7 +81,7 @@ function CropSelect() {
         <header className="px-4 pt-3 pb-5">
           <BackButton />
           <h1 className="mt-3 text-[24px] font-semibold tracking-tight">
-            <span className="text-teal-700">작물</span>
+            <span className="text-[#4293A0]">작물</span>
             <span className="text-gray-900">을 선택해 주세요</span>
           </h1>
           <div className="mt-1 text-[14px] text-gray-400">부류별로 품목을 선택할 수 있어요</div>
@@ -102,11 +102,15 @@ function CropSelect() {
           >
             <div className="text-[15px] font-bold text-gray-900">
               내가 선택한 작물
-              <span className="ml-2 px-3 h-4 inline-flex items-center justify-center text-[12px]  text-white bg-teal-600 rounded-full px-2 h-5">
+              <span className="ml-2 px-3 h-4 inline-flex items-center justify-center text-[12px]  text-white bg-[#4293A0] rounded-full px-2 h-5">
                 {Object.values(selectedVarieties).reduce((n, arr) => n + (arr?.length || 0), 0)}
               </span>
             </div>
-            <span className={`text-xl text-gray-500 transition-transform ${showSelected ? '' : ''}`}>{showSelected ? '▴' : '▾'}</span>
+            <img 
+              src={showSelected ? "/src/images/chevron-up.png" : "/src/images/chevron-down.png"} 
+              alt={showSelected ? "닫기" : "펼치기"} 
+              className="w-4 h-4 object-contain" 
+            />
           </button>
           {showSelected && (
             <div className="px-4 pb-5 flex flex-wrap gap-3">
@@ -118,7 +122,7 @@ function CropSelect() {
                       const next = (selectedVarieties[cropId] || []).filter(x => x !== varId)
                       setSelectedVarieties({ ...selectedVarieties, [cropId]: next })
                     }}
-                    className="px-2 h-7 rounded-full bg-teal-600 text-white text-[13px] inline-flex items-center gap-2 shadow-sm"
+                    className="px-2 h-7 rounded-full bg-[#4293A0] text-white text-[13px] inline-flex items-center gap-2 shadow-sm"
                   >
                     <span>{(varietiesMap[cropId] || []).find(v => v.id === varId)?.name || ''}</span>
                     <span className="text-white/90">×</span>
@@ -161,7 +165,7 @@ function CropSelect() {
                             className="w-full py-4 px-3 flex items-center justify-between"
                           >
                             <span className="text-base text-gray-800"><span className="font-medium">{category}</span> &gt; {name}</span>
-                            <span className={`text-xl ${on ? 'text-teal-600' : 'text-gray-300'}`}>✓</span>
+                            <span className={`text-xl ${on ? 'text-[#4293A0]' : 'text-gray-300'}`}>✓</span>
                           </button>
                         )
                       })}
@@ -197,7 +201,7 @@ function CropSelect() {
                 onClick={() => openSheetFor(crop.id)}
                 className={`relative flex flex-col items-center justify-center text-sm transition py-2`}
               >
-                <div className={`w-16 h-16 rounded-full ${pastel} flex items-center justify-center relative ${active ? 'ring-2 ring-teal-600' : ''}`}>
+                <div className={`w-16 h-16 rounded-full ${pastel} flex items-center justify-center relative ${active ? 'ring-2 ring-[#4293A0]' : ''}`}>
                   <img 
                     src={imageSrc} 
                     alt={crop.name}
@@ -216,7 +220,7 @@ function CropSelect() {
                     }}
                   />
                   {count > 0 && (
-                    <span className="absolute -top-3 bg-teal-600 text-white text-[10px] font-semibold rounded-full w-7 h-5 flex items-center justify-center">
+                    <span className="absolute -top-3 bg-[#4293A0] text-white text-[10px] font-semibold rounded-full w-7 h-5 flex items-center justify-center">
                       {count}
                     </span>
                   )}
@@ -228,18 +232,19 @@ function CropSelect() {
           </div>
           )}
         </div>
-        <div className="mt-auto p-0">
+        <div className="mt-auto">
           <button
             disabled={Object.values(selectedVarieties).reduce((total, arr) => total + (arr?.length || 0), 0) === 0}
             onClick={() => navigate('/summary')}
             className={`w-full h-12 rounded-none ${
               Object.values(selectedVarieties).reduce((total, arr) => total + (arr?.length || 0), 0) === 0
                 ? 'bg-gray-200 text-gray-400'
-                : 'bg-teal-600 text-white'
+                : 'bg-[#4293A0] text-white'
             }`}
           >
             다음
           </button>
+          <div className="h-4 bg-white"></div>
         </div>
       </div>
       <BottomSheet
@@ -248,7 +253,7 @@ function CropSelect() {
         onClose={() => setSheetOpen(false)}
         footer={(
           <button
-            className="w-full h-12 rounded-none bg-teal-600 text-white"
+            className="w-full h-12 rounded-none bg-[#4293A0] text-white"
             onClick={() => {
               if (!currentCropId) return
               setSelectedVarieties({ ...selectedVarieties, [currentCropId]: tempSelected.map(Number) })
@@ -269,7 +274,7 @@ function CropSelect() {
                   onClick={() => {
                     setTempSelected(tempSelected.filter(x => x !== sel))
                   }}
-                  className="px-3 h-8 rounded-full bg-teal-600 text-white text-[12px] inline-flex items-center gap-2"
+                  className="px-3 h-8 rounded-full bg-[#4293A0] text-white text-[12px] inline-flex items-center gap-2"
                 >
                   <span>{(varietiesMap[currentCropId] || []).find(v => v.id === Number(sel))?.name || sel}</span>
                   <span className="opacity-90">×</span>
@@ -291,7 +296,7 @@ function CropSelect() {
                   onClick={() => {
                     setTempSelected(prev => (prev.includes(String(v.id)) ? prev.filter(x => x !== String(v.id)) : [...prev, String(v.id)]))
                   }}
-                  className={`h-10 rounded-full border text-sm ${on ? 'bg-teal-600 text-white border-teal-600' : 'bg-white text-gray-800'} `}
+                  className={`h-10 rounded-full border text-sm ${on ? 'bg-[#4293A0] text-white border-[#4293A0]' : 'bg-white text-gray-800'} `}
                 >
                   {v.name}
                 </button>

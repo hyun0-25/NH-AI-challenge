@@ -26,7 +26,7 @@ function HomeRegister() {
         </header>
         <main className="px-4 mt-2 flex-1">
           <div className="w-full h-full rounded-3xl bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">
-            <div className="absolute -left-10 top-6 w-40 h-40 bg-blue-100 rounded-full blur-2xl opacity-60" />
+            <div className="absolute -left-10 top-6 w-20 h-40 bg-blue-100 rounded-full blur-2xl opacity-60" />
             <div className="absolute right-0 -bottom-8 w-48 h-48 bg-indigo-100 rounded-full blur-2xl opacity-60" />
             <div className="absolute left-6 bottom-10 w-16 h-16 bg-cyan-100 rounded-full blur-md opacity-70" />
           </div>

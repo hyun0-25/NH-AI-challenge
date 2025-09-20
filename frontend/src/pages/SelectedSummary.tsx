@@ -35,7 +35,7 @@ function SelectedSummary() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-10">
           <BackButton />
-          <div className="text-[20px] font-semibold"><span className="text-gray-900">내가 선택한 </span><span className="text-teal-700">작물</span><span className="text-gray-900">이에요</span></div>
+          <div className="text-[20px] font-semibold"><span className="text-gray-900">내가 선택한 </span><span className="text-[#4293A0]">작물</span><span className="text-gray-900">이에요</span></div>
           <div className="text-[15px] text-gray-400 mt-1">맞는지 확인해주세요</div>
         </header>
         <main className="px-4 py-3 flex-1 overflow-auto">
@@ -55,7 +55,7 @@ function SelectedSummary() {
                 return (
                   <div key={`${id}-${varId}`} className="flex items-center gap-4">
                     <div className="relative">
-                      <div className="w-16 h-16 rounded-full bg-gray-50 border flex items-center justify-center text-2xl">
+                      <div className="w-16 h-16 rounded-full bg-white border flex items-center justify-center text-2xl">
                         <img 
                           src={imageSrc} 
                           alt={meta.name}
@@ -86,7 +86,7 @@ function SelectedSummary() {
                           }
                           setSelectedVarieties(newSelectedVarieties)
                         }}
-                        className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-teal-600 flex items-center justify-center"
+                        className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#4293A0] flex items-center justify-center"
                       >
                         <span className="text-white text-xs">×</span>
                       </button>
@@ -100,60 +100,90 @@ function SelectedSummary() {
             })}
           </div>
         </main>
-        <div className="mt-auto p-0">
+        <div className="mt-auto">
           <button 
             onClick={async () => {
               // Collect all selected variety IDs
               const cropVarietyList = Object.values(selectedVarieties).flat()
               
-              // Prepare request body
-              const requestBody = {
-                farmZipCode,
-                farmLocation,
-                farmLocationDetail,
-                farmType,
-                farmTypeOtherDescription: farmType === 'OTHER' ? farmTypeOtherDescription : null,
-                farmArea,
-                farmAreaUnitType,
-                cropVarietyList
-              }
+              const editingFarmId = localStorage.getItem('editingFarmId')
               
               try {
-                const response = await fetch('/api/farms', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify(requestBody)
-                })
-                
-                if (response.ok) {
-                  console.log('Farm registration successful')
+                if (editingFarmId) {
+                  // 수정 모드: PUT 요청
+                  const response = await fetch(`/api/farms/${editingFarmId}`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      cropVarietyList
+                    })
+                  })
                   
-                  // Clear all form data
-                  setSelectedCrops([])
-                  setSelectedVarieties({})
-                  setFarmZipCode('')
-                  setFarmLocation('')
-                  setFarmLocationDetail('')
-                  setFarmType(null)
-                  setFarmTypeOtherDescription(null)
-                  setFarmArea(0)
-                  setFarmAreaUnitType('M2')
-                  
-                  // Navigate to completion page
-                  navigate('/complete')
+                  if (response.ok) {
+                    console.log('Farm update successful')
+                    
+                    // Clear all form data
+                    setSelectedCrops([])
+                    setSelectedVarieties({})
+                    localStorage.removeItem('editingFarmId')
+                    
+                    // Navigate to edit completion page
+                    navigate('/farm-edit-complete')
+                  } else {
+                    console.error('Farm update failed')
+                  }
                 } else {
-                  console.error('Farm registration failed')
+                  // 새 등록 모드: POST 요청
+                  const requestBody = {
+                    farmZipCode,
+                    farmLocation,
+                    farmLocationDetail,
+                    farmType,
+                    farmTypeOtherDescription: farmType === 'OTHER' ? farmTypeOtherDescription : null,
+                    farmArea,
+                    farmAreaUnitType,
+                    cropVarietyList
+                  }
+                  
+                  const response = await fetch('/api/farms', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                  })
+                  
+                  if (response.ok) {
+                    console.log('Farm registration successful')
+                    
+                    // Clear all form data
+                    setSelectedCrops([])
+                    setSelectedVarieties({})
+                    setFarmZipCode('')
+                    setFarmLocation('')
+                    setFarmLocationDetail('')
+                    setFarmType(null)
+                    setFarmTypeOtherDescription(null)
+                    setFarmArea(0)
+                    setFarmAreaUnitType('M2')
+                    
+                    // Navigate to completion page
+                    navigate('/complete')
+                  } else {
+                    console.error('Farm registration failed')
+                  }
                 }
               } catch (error) {
-                console.error('Error registering farm:', error)
+                console.error('Error processing farm:', error)
               }
             }}
-            className="w-full h-12 rounded-none bg-teal-600 text-white"
+            className="w-full h-12 rounded-none bg-[#4293A0] text-white"
           >
             확인
           </button>
+          <div className="h-4 bg-white"></div>
         </div>
       </div>
     </MobileFrame>

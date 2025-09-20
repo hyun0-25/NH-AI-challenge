@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import MobileFrame from '../components/MobileFrame'
 
-function RegistrationComplete() {
+function FarmEditComplete() {
   const navigate = useNavigate()
 
   return (
@@ -23,12 +23,12 @@ function RegistrationComplete() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
           <h1 className="text-[24px] font-semibold mb-6 mt-6">
-            <span className="text-gray-900">작물/농장 정보 등록 </span>
+            <span className="text-gray-900">작물/농장 정보 수정 </span>
             <span className="text-[#4293A0]">완료</span>
           </h1>
           
           <div className="text-[16px] text-gray-500 leading-relaxed mb-8">
-            작물/농장 정보 등록이 완료되었어요!<br />
+            작물/농장 정보 수정이 완료되었어요!<br />
             이제부터 내 작물/농장에 맞는<br />
             재해 보험, 지원 정책, 금융 상품을<br />
             추천받아보세요.
@@ -38,7 +38,7 @@ function RegistrationComplete() {
           <div className="relative w-80 h-80 flex items-center justify-center">
             <img 
               src={new URL('../images/정보입력 완료 화면 이미지.png', import.meta.url).href}
-              alt="정보입력 완료"
+              alt="정보수정 완료"
               className="w-full h-full object-contain"
             />
           </div>
@@ -64,4 +64,4 @@ function RegistrationComplete() {
   )
 }
 
-export default RegistrationComplete
+export default FarmEditComplete

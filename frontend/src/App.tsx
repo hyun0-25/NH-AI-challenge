@@ -7,6 +7,7 @@ import FarmInfo from './pages/FarmInfo.tsx'
 import Dashboard from './pages/Dashboard.tsx'
 import FarmManage from './pages/FarmManage.tsx'
 import RegistrationComplete from './pages/RegistrationComplete.tsx'
+import FarmEditComplete from './pages/FarmEditComplete.tsx'
 
 export type Crop = {
   id: string
@@ -114,6 +115,7 @@ function App() {
           <Route path="/farm-info" element={<FarmInfo />} />
           <Route path="/manage" element={<FarmManage />} />
           <Route path="/complete" element={<RegistrationComplete />} />
+          <Route path="/farm-edit-complete" element={<FarmEditComplete />} />
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

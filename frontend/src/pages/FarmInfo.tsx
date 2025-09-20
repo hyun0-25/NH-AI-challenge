@@ -49,7 +49,7 @@ function FarmInfo() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-10">
           <BackButton />
-          <h1 className="text-[25px] font-semibold">농장 <span className="text-teal-700">유형</span>과 <span className="text-teal-700">면적</span>을 입력하면</h1>
+          <h1 className="text-[25px] font-semibold">농장 <span className="text-[#4293A0]">유형</span>과 <span className="text-[#4293A0]">면적</span>을 입력하면</h1>
           <div className="text-[17px] text-gray-500">알맞은 보험 및 정책을 찾아드려요</div>
         </header>
         <main className="px-4 space-y-10">
@@ -106,14 +106,15 @@ function FarmInfo() {
             <div className="text-[12px] text-gray-400">{m2 ? `약 ${pyeong.toFixed(0)}평 / ${ha.toFixed(2)}ha` : '약 0평 / 0ha'}</div>
           </section>
         </main>
-        <div className="mt-auto p-0">
+        <div className="mt-auto">
           <button 
             disabled={!farmType || !areaFloat || (farmType === 'OTHER' && !farmTypeOtherDescription?.trim())} 
-            className={`w-full h-12 rounded-none ${(!farmType || !areaFloat || (farmType === 'OTHER' && !farmTypeOtherDescription?.trim())) ? 'bg-gray-200 text-gray-400' : 'bg-teal-600 text-white'}`}
+            className={`w-full h-12 rounded-none ${(!farmType || !areaFloat || (farmType === 'OTHER' && !farmTypeOtherDescription?.trim())) ? 'bg-gray-200 text-gray-400' : 'bg-[#4293A0] text-white'}`}
             onClick={() => navigate('/crops')}
           >
             확인
           </button>
+          <div className="h-4 bg-white"></div>
         </div>
       </div>
     </MobileFrame>

@@ -9,9 +9,9 @@ function BackButton({ className }: Props) {
     <button
       aria-label="back"
       onClick={() => navigate(-1)}
-      className={`w-10 h-10 -ml-2 flex items-center justify-center text-2xl text-gray-700 ${className ?? ''}`}
+      className={`w-10 h-10 -ml-2 flex items-center justify-center ${className ?? ''}`}
     >
-      ‹
+      <img src="/src/images/arrow-left.png" alt="뒤로가기" className="w-6 h-6 object-contain" />
     </button>
   )
 }

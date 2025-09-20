@@ -27,7 +27,10 @@ function BottomSheet({ open, title, onClose, children, footer }: Props) {
           {children}
         </div>
         {footer && (
-          <div className="px-0">{footer}</div>
+          <div className="px-0">
+            {footer}
+            <div className="h-4 bg-white"></div>
+          </div>
         )}
       </div>
     </div>
