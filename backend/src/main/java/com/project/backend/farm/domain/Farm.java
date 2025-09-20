@@ -44,7 +44,10 @@ public class Farm extends BaseEntity {
     @Column(nullable = false)
     private Integer farmArea;
 
-    private Farm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea) {
+    @Column(nullable = false)
+    private Boolean farmIsRepresent;
+
+    private Farm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, Boolean farmIsRepresent) {
         this.user = user;
         this.farmZipCode = farmZipCode;
         this.farmLocation = farmLocation;
@@ -52,9 +55,10 @@ public class Farm extends BaseEntity {
         this.farmType = farmType;
         this.farmTypeOtherDescription = farmTypeOtherDescription;
         this.farmArea = farmArea;
+        this.farmIsRepresent = farmIsRepresent;
     }
 
-    public static Farm createFarm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea) {
-        return new Farm(user, farmZipCode, farmLocation, farmLocationDetail, farmType, farmTypeOtherDescription, farmArea);
+    public static Farm createFarm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, Boolean farmIsRepresent) {
+        return new Farm(user, farmZipCode, farmLocation, farmLocationDetail, farmType, farmTypeOtherDescription, farmArea, farmIsRepresent);
     }
 }

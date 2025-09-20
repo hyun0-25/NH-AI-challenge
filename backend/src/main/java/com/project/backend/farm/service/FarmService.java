@@ -8,9 +8,12 @@ import com.project.backend.crops.repository.CropVarietyRepository;
 import com.project.backend.farm.domain.Farm;
 import com.project.backend.farm.domain.FarmCrop;
 import com.project.backend.farm.dto.request.FarmCropRequestDto;
+import com.project.backend.farm.dto.request.FarmCropUpdateRequestDto;
 import com.project.backend.farm.dto.response.FarmCropResponseDto;
+import com.project.backend.farm.exception.FarmErrorCode;
 import com.project.backend.farm.repository.FarmCropRepository;
 import com.project.backend.farm.repository.FarmRepository;
+import com.project.backend.global.exception.BaseException;
 import com.project.backend.users.domain.User;
 import com.project.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +43,7 @@ public class FarmService {
     public FarmCropResponseDto createFarm(FarmCropRequestDto farmCropRequestDto) {
         log.info("{ FarmService } : farm & crops 생성");
         User user = userRepository.findByUUIDAndIsDeleted(userId);
-
+        Integer farmCount = farmRepository.countAllByIsDeleted();
         Farm farm = Farm.createFarm(
                 user,
                 farmCropRequestDto.farmZipCode(),
@@ -48,13 +51,86 @@ public class FarmService {
                 farmCropRequestDto.farmLocationDetail(),
                 farmCropRequestDto.farmType(),
                 farmCropRequestDto.farmTypeOtherDescription(),
-                farmCropRequestDto.farmArea()
+                farmCropRequestDto.farmArea(),
+                farmCount == 0 ? true : false
         );
         farmRepository.save(farm);
 
+        // 농장별 작물 save
+        List<CropVariety> cropVarietyList = createFarmCrop(farmCropRequestDto.cropVarietyList(), farm);
+
+        // 부류별 그룹핑
+        List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
+
+        log.info("{ FarmService } : farm & crops 생성 성공");
+        return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
+    }
+
+    public void updateFarmCrop(Long farmId, FarmCropUpdateRequestDto farmCropUpdateRequestDto) {
+        log.info("{ FarmService } : farm & crops 수정");
+        Farm farm = farmRepository.findByFarmIdAndIsDeleted(farmId);
+        if (farm == null)
+            throw BaseException.type(FarmErrorCode.FARM_NOT_FOUND);
+
+        List<FarmCrop> farmCrops = farmCropRepository.findFarmCropsByFarmIdAndIsDeleted(farmId);
+        for (FarmCrop farmCrop : farmCrops) {
+            farmCrop.softDelete();
+        }
+
+        // 농장별 작물 save
+        createFarmCrop(farmCropUpdateRequestDto.cropVarietyList(), farm);
+
+        log.info("{ FarmService } : farm & crops 수정 성공");
+    }
+
+    public FarmCropResponseDto getFarmCrop(Long farmId) {
+        log.info("{ FarmService } : farm & crops 상세조회");
+        Farm farm = farmRepository.findByFarmIdAndIsDeleted(farmId);
+        if (farm == null)
+            throw BaseException.type(FarmErrorCode.FARM_NOT_FOUND);
+
+        List<FarmCrop> farmCrops = farm.getFarmCropList();
+        List<CropVariety> cropVarietyList = new ArrayList<>();
+        for (FarmCrop farmCrop : farmCrops) {
+            if (!farmCrop.getIsDeleted())
+                cropVarietyList.add(farmCrop.getCropVariety());
+        }
+        List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
+        log.info("{ FarmService } : farm & crops 상세조회 성공");
+        return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
+    }
+
+    public List<FarmCropResponseDto> getAllFarmCrop() {
+        log.info("{ FarmService } : farm & crops 리스트 조회");
+        List<Farm> farms = farmRepository.findAllByFarmIdAndIsDeleted();
+        List<FarmCropResponseDto> farmCropResponseDtos = new ArrayList<>();
+        for (Farm farm : farms) {
+            List<FarmCrop> farmCrops = farm.getFarmCropList();
+            List<CropVariety> cropVarietyList = new ArrayList<>();
+            for (FarmCrop farmCrop : farmCrops) {
+                if (!farmCrop.getIsDeleted())
+                    cropVarietyList.add(farmCrop.getCropVariety());
+            }
+            List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
+            farmCropResponseDtos.add(FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos));
+        }
+        log.info("{ FarmService } : farm & crops 리스트 조회 성공");
+        return farmCropResponseDtos;
+    }
+
+    public void deleteFarm(Long farmId) {
+        log.info("{ FarmService } : farm & crops 삭제");
+        Farm farm = farmRepository.findByFarmIdAndIsDeleted(farmId);
+        if (farm == null)
+            throw BaseException.type(FarmErrorCode.FARM_NOT_FOUND);
+        farm.softDelete();
+        log.info("{ FarmService } : farm & crops 삭제 성공");
+    }
+
+    public List<CropVariety> createFarmCrop(List<Long> farmCropVarietyList, Farm farm) {
         List<CropVariety> cropVarietyList = new ArrayList<>();
         boolean isRepresent = true;
-        for (Long cropVarietyId : farmCropRequestDto.cropVarietyList()) {
+        for (Long cropVarietyId : farmCropVarietyList) {
             CropVariety cropVariety = cropVarietyRepository.findByCropVarietyId(cropVarietyId);
             FarmCrop farmCrop = FarmCrop.createFarmCrop(farm, cropVariety, isRepresent);
             isRepresent = false;
@@ -62,7 +138,10 @@ public class FarmService {
             cropVarietyList.add(cropVariety);
         }
 
-        // 부류별 그룹핑
+        return cropVarietyList;
+    }
+
+    public List<CropCategoryResponseDto> mapCropCategory(List<CropVariety> cropVarietyList) {
         Map<CropCategory, List<CropVariety>> groupedByCategory = cropVarietyList.stream()
                 .collect(Collectors.groupingBy(CropVariety::getCropCategory));
         // dto 변환
@@ -74,9 +153,7 @@ public class FarmService {
                     return CropCategoryResponseDto.fromCropCategoryList(cropCategory, cropVarieties);
                 })
                 .toList();
-
-        log.info("{ FarmService } : farm & crops 생성 성공");
-        return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
+        return cropCategoryResponseDtos;
     }
 
 }
