@@ -40,7 +40,7 @@ public class FarmService {
     public FarmCropResponseDto createFarm(FarmCropRequestDto farmCropRequestDto) {
         log.info("{ FarmService } : farm & crops 생성");
         User user = userRepository.findByUUIDAndIsDeleted(userId);
-
+        Integer farmCount = farmRepository.countAllByIsDeletedIsFalse();
         Farm farm = Farm.createFarm(
                 user,
                 farmCropRequestDto.farmZipCode(),
@@ -48,7 +48,8 @@ public class FarmService {
                 farmCropRequestDto.farmLocationDetail(),
                 farmCropRequestDto.farmType(),
                 farmCropRequestDto.farmTypeOtherDescription(),
-                farmCropRequestDto.farmArea()
+                farmCropRequestDto.farmArea(),
+                farmCount == 0 ? true : false
         );
         farmRepository.save(farm);
 
