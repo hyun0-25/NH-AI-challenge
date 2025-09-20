@@ -56,28 +56,11 @@ public class FarmService {
         );
         farmRepository.save(farm);
 
-        List<CropVariety> cropVarietyList = new ArrayList<>();
-        boolean isRepresent = true;
-        for (Long cropVarietyId : farmCropRequestDto.cropVarietyList()) {
-            CropVariety cropVariety = cropVarietyRepository.findByCropVarietyId(cropVarietyId);
-            FarmCrop farmCrop = FarmCrop.createFarmCrop(farm, cropVariety, isRepresent);
-            isRepresent = false;
-            farmCropRepository.save(farmCrop);
-            cropVarietyList.add(cropVariety);
-        }
+        // 농장별 작물 save
+        List<CropVariety> cropVarietyList = createFarmCrop(farmCropRequestDto.cropVarietyList(), farm);
 
         // 부류별 그룹핑
-        Map<CropCategory, List<CropVariety>> groupedByCategory = cropVarietyList.stream()
-                .collect(Collectors.groupingBy(CropVariety::getCropCategory));
-        // dto 변환
-        List<CropCategoryResponseDto> cropCategoryResponseDtos = groupedByCategory.entrySet().stream()
-                .map(entry -> {
-                    CropCategory cropCategory = entry.getKey();
-                    List<CropVariety> cropVarieties = entry.getValue();
-
-                    return CropCategoryResponseDto.fromCropCategoryList(cropCategory, cropVarieties);
-                })
-                .toList();
+        List<CropCategoryResponseDto> cropCategoryResponseDtos = mapCropCategory(cropVarietyList);
 
         log.info("{ FarmService } : farm & crops 생성 성공");
         return FarmCropResponseDto.fromFarmCrop(farm, cropCategoryResponseDtos);
@@ -94,16 +77,39 @@ public class FarmService {
             farmCrop.softDelete();
         }
 
+        // 농장별 작물 save
+        createFarmCrop(farmCropUpdateRequestDto.cropVarietyList(), farm);
+
+        log.info("{ FarmService } : farm & crops 수정 완료");
+    }
+
+    public List<CropVariety> createFarmCrop(List<Long> farmCropVarietyList, Farm farm) {
         List<CropVariety> cropVarietyList = new ArrayList<>();
         boolean isRepresent = true;
-        for (Long cropVarietyId : farmCropUpdateRequestDto.cropVarietyList()) {
+        for (Long cropVarietyId : farmCropVarietyList) {
             CropVariety cropVariety = cropVarietyRepository.findByCropVarietyId(cropVarietyId);
             FarmCrop farmCrop = FarmCrop.createFarmCrop(farm, cropVariety, isRepresent);
             isRepresent = false;
             farmCropRepository.save(farmCrop);
             cropVarietyList.add(cropVariety);
         }
-        log.info("{ FarmService } : farm & crops 수정 완료");
+
+        return cropVarietyList;
+    }
+
+    public List<CropCategoryResponseDto> mapCropCategory(List<CropVariety> cropVarietyList) {
+        Map<CropCategory, List<CropVariety>> groupedByCategory = cropVarietyList.stream()
+                .collect(Collectors.groupingBy(CropVariety::getCropCategory));
+        // dto 변환
+        List<CropCategoryResponseDto> cropCategoryResponseDtos = groupedByCategory.entrySet().stream()
+                .map(entry -> {
+                    CropCategory cropCategory = entry.getKey();
+                    List<CropVariety> cropVarieties = entry.getValue();
+
+                    return CropCategoryResponseDto.fromCropCategoryList(cropCategory, cropVarieties);
+                })
+                .toList();
+        return cropCategoryResponseDtos;
     }
 
 }
