@@ -44,10 +44,14 @@ public class Farm extends BaseEntity {
     @Column(nullable = false)
     private Integer farmArea;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FarmAreaUnitType farmAreaUnitType;
+  
     @Column(nullable = false)
     private Boolean farmIsRepresent;
 
-    private Farm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, Boolean farmIsRepresent) {
+    private Farm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, FarmAreaUnitType farmAreaUnitType, Boolean farmIsRepresent) {
         this.user = user;
         this.farmZipCode = farmZipCode;
         this.farmLocation = farmLocation;
@@ -55,10 +59,11 @@ public class Farm extends BaseEntity {
         this.farmType = farmType;
         this.farmTypeOtherDescription = farmTypeOtherDescription;
         this.farmArea = farmArea;
+        this.farmAreaUnitType = farmAreaUnitType;
         this.farmIsRepresent = farmIsRepresent;
     }
 
-    public static Farm createFarm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, Boolean farmIsRepresent) {
-        return new Farm(user, farmZipCode, farmLocation, farmLocationDetail, farmType, farmTypeOtherDescription, farmArea, farmIsRepresent);
+    public static Farm createFarm(User user, String farmZipCode, String farmLocation, String farmLocationDetail, FarmType farmType, String farmTypeOtherDescription, Integer farmArea, FarmAreaUnitType farmAreaUnitType, Boolean farmIsRepresent) {
+        return new Farm(user, farmZipCode, farmLocation, farmLocationDetail, farmType, farmTypeOtherDescription, farmArea, farmAreaUnitType, farmIsRepresent);
     }
 }

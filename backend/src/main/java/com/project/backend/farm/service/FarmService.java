@@ -52,6 +52,7 @@ public class FarmService {
                 farmCropRequestDto.farmType(),
                 farmCropRequestDto.farmTypeOtherDescription(),
                 farmCropRequestDto.farmArea(),
+                farmCropRequestDto.farmAreaUnitType(),
                 farmCount == 0 ? true : false
         );
         farmRepository.save(farm);
