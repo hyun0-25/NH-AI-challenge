@@ -35,4 +35,16 @@ public class FarmController {
         log.info("{ FarmController } : Farm & Crops 수정 진입");
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{farmId}")
+    public ResponseEntity<FarmCropResponseDto> getFarmCrop(
+            @PathVariable Long farmId) {
+        log.info("{ FarmController } : Farm & Crops 상세조회 진입");
+        log.info(" >> FarmId : " + farmId);
+        FarmCropResponseDto farmCropResponseDto = farmService.getFarmCrop(farmId);
+        log.info("{ FarmController } : Farm & Crops 상세조회 진입");
+        return ResponseEntity.ok(farmCropResponseDto);
+    }
+
+
 }
