@@ -5,6 +5,7 @@ import settings
 import os
 import json
 from typing import List, Dict
+import click
 
 def recommend_product(doc_name: str, persorna_info: str = "30대 청년 농부") -> Dict[str, List[int]]:
     """
@@ -44,8 +45,13 @@ def recommend_product(doc_name: str, persorna_info: str = "30대 청년 농부")
 
     return result_dict
         
+@click.command()
+@click.option('--doc-name', '-d', type=click.Choice(['finance', 'policy', 'insurance']), required=True, help='상품 유형 (finance/policy/insurance)')
+@click.option('--persona-info', '-p', default="30대 청년 농부", help='사용자 정보 (기본값: 30대 청년 농부)')
+def main(doc_name: str, persona_info: str):
+    """상품 추천 시스템"""
+    result_dict = recommend_product(doc_name=doc_name, persorna_info=persona_info)
+    print(json.dumps(result_dict, ensure_ascii=False, indent=2))
+
 if __name__ == "__main__":
-    persorna_info = "1995년생 청년 농부"
-    select_table(table_name="policy")
-    result_dict = recommend_product(doc_name="policy", persorna_info=persorna_info)
-    print(result_dict)
+    main()
