@@ -2,6 +2,7 @@ package com.project.backend.farm.dto.response;
 
 import com.project.backend.crops.dto.response.CropCategoryResponseDto;
 import com.project.backend.farm.domain.Farm;
+import com.project.backend.farm.domain.FarmAreaUnitType;
 import com.project.backend.farm.domain.FarmType;
 import lombok.Builder;
 
@@ -16,6 +17,7 @@ public record FarmCropResponseDto(
         FarmType farmType,
         String farmTypeOtherDescription,
         Integer farmArea,
+        FarmAreaUnitType farmAreaUnitType,
         List<CropCategoryResponseDto> cropCategoryResponseDtoList
 ) {
     public static FarmCropResponseDto fromFarmCrop(Farm farm, List<CropCategoryResponseDto> cropCategoryResponseDtoList) {
@@ -27,6 +29,7 @@ public record FarmCropResponseDto(
                 .farmType(farm.getFarmType())
                 .farmTypeOtherDescription(farm.getFarmTypeOtherDescription())
                 .farmArea(farm.getFarmArea())
+                .farmAreaUnitType(farm.getFarmAreaUnitType())
                 .cropCategoryResponseDtoList(cropCategoryResponseDtoList)
                 .build();
     }
