@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum FarmErrorCode implements ErrorCode {
-    FARM_NOT_FOUND(HttpStatus.NOT_FOUND, "FARM_001", "농장 정보를 찾을 수 없습니다.");
+    FARM_NOT_FOUND(HttpStatus.NOT_FOUND, "FARM_001", "농장 정보를 찾을 수 없습니다."),
+    FARM_CROP_NOT_FOUND(HttpStatus.NOT_FOUND, "FARM_002", "해당 농장의 작물 정보를 찾을 수 없습니다.");
 
     private final HttpStatus status;
     private final String errorCode;
