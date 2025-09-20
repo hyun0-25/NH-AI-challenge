@@ -1,6 +1,7 @@
 import pandas as pd
-from utils import mysql_client, SELECT_QUERY
+from ..utils import mysql_client, SELECT_QUERY
 from langchain_core.documents import Document
+
 
 def select_table(table_name: str) -> pd.DataFrame:
     """
@@ -17,9 +18,9 @@ def select_table(table_name: str) -> pd.DataFrame:
             result = cursor.fetchall()
 
             # 컬럼명 추출
-            columns = [desc[0] for desc in cursor.description]  
+            columns = [desc[0] for desc in cursor.description]
             result_df = pd.DataFrame(result, columns=columns)
-            
+
     except Exception as e:
         print(f"failed: {e}")
         if connection:
@@ -29,6 +30,6 @@ def select_table(table_name: str) -> pd.DataFrame:
 
 
 if __name__ == "__main__":
-    table_name = "finance" 
+    table_name = "finance"
     result_df = select_table(table_name)
     print(result_df)
