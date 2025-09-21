@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import recommend_router
+from app.routers import recommend_router, rag_router
 
 app = FastAPI()
 
@@ -10,3 +10,4 @@ def root():
 
 
 app.include_router(recommend_router.router)
+app.include_router(rag_router.router)

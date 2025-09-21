@@ -1,11 +1,13 @@
 import sys
 import os
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
 from preprocessor.dataloader import select_table
+from schemas.recommend_schema import RecommendRequest, RecommendResponse
 import settings
 import os
 import json
@@ -52,24 +54,24 @@ def recommend_product(doc_name: str, persorna_info: str) -> Dict[str, List[int]]
     return result_dict
 
 
-#### API 연결 코드 ####
-# def main(request: RecommendRequest) -> RecommendResponse:
-#     """상품 추천 시스템"""
-#     print("request: ", request)
-#     result_dict = recommend_product(
-#         doc_name=request.docName, persorna_info=request.userInfo
-#     )
-#     return RecommendResponse(**result_dict)
+### API 연결 코드 ####
+def main(request: RecommendRequest) -> RecommendResponse:
+    """상품 추천 시스템"""
+    print("request: ", request)
+    result_dict = recommend_product(
+        doc_name=request.docName, persorna_info=request.userInfo
+    )
+    return RecommendResponse(**result_dict)
 
 
 #### API 연결 X ####
-def main() -> RecommendResponse:
-    """상품 추천 시스템"""
-    result_dict = recommend_product(
-        doc_name="finance",
-        persorna_info="1995년생 청년 농부, 딸기 재배",
-    )
-    return RecommendResponse(**result_dict)
+# def main() -> RecommendResponse:
+#     """상품 추천 시스템"""
+#     result_dict = recommend_product(
+#         doc_name="finance",
+#         persorna_info="1995년생 청년 농부, 딸기 재배",
+#     )
+#     return RecommendResponse(**result_dict)
 
 
 if __name__ == "__main__":
