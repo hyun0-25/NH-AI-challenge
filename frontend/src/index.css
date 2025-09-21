@@ -17,7 +17,7 @@
 
 /* iPhone-like device frame for preview */
 .iphone-preview-wrap {
-  background: #e5e7eb;
+  background: white;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -29,7 +29,7 @@
   height: 844px; /* iPhone 14 height */
   background: white;
   border-radius: 50px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25), 0 10px 20px rgba(0,0,0,0.1);
+  border: 1px solid #d1d5db; /* 회색 얇은 테두리 */
   position: relative;
   overflow: hidden;
 }
@@ -51,7 +51,7 @@
   position: absolute;
   inset: 0;
   padding-top: 44px; /* status bar height */
-  background: #f9fafb;
+  background: transparent; /* 배경을 투명하게 하여 배경 이미지가 보이도록 */
 }
 
 .status-bar {
@@ -64,10 +64,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 16px;
-  color: #111827;
+  color: white; /* 텍스트 색상을 흰색으로 변경 */
   font-weight: 600;
   z-index: 10;
-  background: white;
+  background: transparent; /* 배경을 투명하게 하여 배경 이미지가 보이도록 */
 }
 
 /* Hide scrollbar but keep functionality */

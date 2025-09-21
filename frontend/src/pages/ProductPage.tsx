@@ -20,7 +20,6 @@ function ProductPage() {
   const [searchParams] = useSearchParams()
   const [productData, setProductData] = useState<ProductResponse | null>(null)
   const [loading, setLoading] = useState(true)
-  const [progress, setProgress] = useState(0)
 
   // URL에서 farmId와 cropId 추출
   const farmId = searchParams.get('farmId')
@@ -28,16 +27,6 @@ function ProductPage() {
 
   useEffect(() => {
     const fetchProductData = async () => {
-      // Start progress animation
-      const progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(progressInterval)
-            return 100
-          }
-          return prev + 2
-        })
-      }, 50)
 
       console.log('ProductPage - farmId:', farmId, 'cropId:', cropId)
       if (!farmId || !cropId) {
@@ -75,7 +64,6 @@ function ProductPage() {
         }
         console.log('Setting demo data:', demoData)
         setProductData(demoData)
-        clearInterval(progressInterval)
         setLoading(false)
         return
       }
@@ -155,7 +143,6 @@ function ProductPage() {
         }
         setProductData(demoData)
       } finally {
-        clearInterval(progressInterval)
         setLoading(false)
       }
     }
@@ -204,8 +191,8 @@ function ProductPage() {
   if (loading) {
     return (
       <LoadingScreen
-        title="금융상품 정보를 불러오는 중..."
-        subtitle="잠시만 기다려 주세요."
+        title="농협 금융상품을 검색하고 있습니다"
+        subtitle="회원님께 딱 맞는 상품을 찾아드릴게요."
         headerTitle="콕! 맞는 NH농협 금융상품"
         onHomeClick={() => navigate('/')}
       />

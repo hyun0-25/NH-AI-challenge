@@ -204,8 +204,8 @@ function PolicyPage() {
   if (loading) {
     return (
       <LoadingScreen
-        title="지원정책 정보를 불러오는 중..."
-        subtitle="잠시만 기다려 주세요."
+        title="정부 지원정책을 조회하고 있습니다"
+        subtitle="회원님의 농장에 적용 가능한 정책을 찾아드릴게요."
         headerTitle="콕! 맞는 정부 지원정책"
         onHomeClick={() => navigate('/')}
       />
