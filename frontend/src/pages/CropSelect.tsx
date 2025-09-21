@@ -75,17 +75,17 @@ function CropSelect() {
     setSheetOpen(true)
   }
 
-  return (
-    <MobileFrame>
-      <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-        <header className="px-4 pt-3 pb-5">
+    return (
+      <MobileFrame>
+        <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
+          <header className="px-4 pt-3 pb-5">
           <BackButton />
-          <h1 className="mt-3 text-md font-medium tracking-tight">
-            <span className="text-[#4293A0]">작물</span>
+          <h1 className="mt-3 px-1 text-2xl font-medium tracking-tight">
+            <span className="text-[#4293A0] font-bold">작물</span>
             <span className="text-gray-900">을 선택해 주세요</span>
           </h1>
-          <div className="mt-1 text-[14px] text-gray-400">부류별로 품목을 선택할 수 있어요</div>
-          <div className="mt-3">
+          <div className="mt-1 px-1 mb-10 text-[18px] text-gray-400">부류별로 품목을 선택할 수 있어요</div>
+          <div className="mt-3 ">
             <input
               placeholder="품목을 입력하세요"
               value={query}
@@ -95,7 +95,8 @@ function CropSelect() {
           </div>
         </header>
         {/* 내가 선택한 작물 섹션 */}
-        <section className="mt-3 border-y bg-white">
+        <div className="mt-6 mb-6">
+          <section className="border-y ">
           <button
             className="w-full flex items-center justify-between px-4 py-3"
             onClick={() => setShowSelected(!showSelected)}
@@ -131,10 +132,11 @@ function CropSelect() {
               )}
             </div>
           )}
-        </section>
+          </section>
+        </div>
 
         {/* 스크롤 가능한 본문 */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto scrollbar-hide">
           {/* 검색 결과 */}
           {query.trim() && (
             <div className="px-4 mt-3 space-y-2">

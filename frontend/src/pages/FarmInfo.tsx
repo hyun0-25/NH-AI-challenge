@@ -49,12 +49,12 @@ function FarmInfo() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-10">
           <BackButton />
-          <h1 className="text-md font-medium">농장 <span className="text-[#4293A0]">유형</span>과 <span className="text-[#4293A0]">면적</span>을 입력하면</h1>
-          <div className="text-[17px] text-gray-500">알맞은 보험 및 정책을 찾아드려요</div>
+          <h1 className="text-2xl font-medium pt-5 px-1">농장 <span className="text-[#4293A0] font-bold">유형</span>과 <span className="text-[#4293A0] font-bold">면적</span>을 입력하면</h1>
+          <div className="text-[18px] text-gray-500 px-1">알맞은 보험 및 정책을 찾아드려요</div>
         </header>
-        <main className="px-4 space-y-10">
+        <main className="px-6 space-y-10">
           <section>
-            <div className="text-[17px] font-medium mb-2">농장 유형을 선택해 주세요</div>
+            <div className="text-[18px] font-medium mb-2">농장 유형을 선택해 주세요</div>
             <div className="space-y-2 text-sm text-gray-500">
               {[
                 { key: 'RICE_PADDY', label: '논(벼 재배)' },
@@ -88,7 +88,7 @@ function FarmInfo() {
           </section>
 
           <section className="space-y-2">
-            <div className="text-[17px] font-medium">농장 면적을 입력해 주세요</div>
+            <div className="text-[18px] font-medium">농장 면적을 입력해 주세요</div>
             <div className="flex items-center gap-2">
               <input
                 value={farmArea ? String(farmArea) : ''}
@@ -103,7 +103,7 @@ function FarmInfo() {
                 <option value="ha">ha</option>
               </select>
             </div>
-            <div className="text-[12px] text-gray-400">{m2 ? `약 ${pyeong.toFixed(0)}평 / ${ha.toFixed(2)}ha` : '약 0평 / 0ha'}</div>
+            <div className="text-[11px] text-gray-400 px-2">{m2 ? `약 ${pyeong.toFixed(0)}평 / ${ha.toFixed(2)}ha` : '약 0평 / 0ha'}</div>
           </section>
         </main>
         <div className="mt-auto">

@@ -33,11 +33,13 @@ function SelectedSummary() {
   return (
     <MobileFrame>
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-        <header className="px-4 pt-3 pb-10">
+        <header className="px-4 pt-3 pb-5">
           <BackButton />
-          <div className="text-[20px] font-semibold"><span className="text-gray-900">내가 선택한 </span><span className="text-[#4293A0]">작물</span><span className="text-gray-900">이에요</span></div>
-          <div className="text-[15px] text-gray-400 mt-1">맞는지 확인해주세요</div>
+          <div className="mt-5 px-1 text-2xl font-semibold"><span className="text-gray-900">내가 선택한 </span><span className="text-[#4293A0]">작물</span><span className="text-gray-900">이에요</span></div>
+          <div className="text-[18px] px-1 text-gray-400 mt-1">맞는지 확인해주세요</div>
         </header>
+        {/* 회색 영역 */}
+        <div className="mt-7 bg-gray-100 py-1 mb-3"></div>
         <main className="px-4 py-3 flex-1 overflow-auto">
           <div className="space-y-6">
             {Object.keys(selectedVarieties).filter(id => (selectedVarieties[id] || []).length > 0).flatMap(id => {
