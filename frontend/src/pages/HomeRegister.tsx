@@ -22,7 +22,7 @@ function HomeRegister() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-2">
           <div className="text-sm text-gray-500">내의 작물과 농장을 등록해보세요</div>
-          <h1 className="text-lg font-semibold mt-1">추가정보를 등록해두면 서비스 이용이 더욱 편리해져요!</h1>
+          <h1 className="text-md font-medium mt-1">추가정보를 등록해두면 서비스 이용이 더욱 편리해져요!</h1>
         </header>
         <main className="px-4 mt-2 flex-1">
           <div className="w-full h-full rounded-3xl bg-gradient-to-b from-blue-50 to-white relative overflow-hidden">

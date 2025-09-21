@@ -4,30 +4,30 @@ import MobileFrame from '../components/MobileFrame'
 import BackButton from '../components/BackButton'
 import LoadingScreen from '../components/LoadingScreen'
 
-interface PolicyProduct {
-  policyId: number
-  title: string
-  applDate: string
+interface InsuranceProduct {
+  insuranceId: number
+  insuranceName: string
+  insuranceDescription: string
+  insuranceSupportInfo: string
 }
 
-interface PolicyResponse {
-  policyRecommendList: PolicyProduct[]
-  policyOtherList: PolicyProduct[]
+interface InsuranceResponse {
+  insuranceRecommendList: InsuranceProduct[]
+  insuranceOtherList: InsuranceProduct[]
 }
 
-function PolicyPage() {
+function InsurancePage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [policyData, setPolicyData] = useState<PolicyResponse | null>(null)
+  const [displayData, setDisplayData] = useState<InsuranceResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [progress, setProgress] = useState(0)
 
-  // URL에서 farmId와 cropId 추출
   const farmId = searchParams.get('farmId')
   const cropId = searchParams.get('cropId')
 
   useEffect(() => {
-    const fetchPolicyData = async () => {
+    const fetchInsuranceData = async () => {
       // Start progress animation
       const progressInterval = setInterval(() => {
         setProgress(prev => {
@@ -39,174 +39,210 @@ function PolicyPage() {
         })
       }, 50)
 
-      console.log('PolicyPage - farmId:', farmId, 'cropId:', cropId)
       if (!farmId || !cropId) {
         console.error('Missing farmId or cropId')
         // Fallback demo data
         const demoData = {
-          policyRecommendList: [],
-          policyOtherList: [
+          insuranceRecommendList: [],
+          insuranceOtherList: [
             {
-              policyId: 1,
-              title: "2025 농업인·농대생 생성형 AI 활용 경진대회",
-              applDate: "2025-09-01 ~ 2025-09-26"
+              insuranceId: 1,
+              insuranceName: "과수작물 농작물재해보험",
+              insuranceDescription: "과수의 손해에 대해 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 2,
-              title: "[상시 접수] 2025년 우체국 쇼핑 연계 농촌융복합산업 브랜드관 하반기 입점 안내",
-              applDate: "2025-06 ~ 2025-12"
+              insuranceId: 2,
+              insuranceName: "벼·맥류 농작물재해보험",
+              insuranceDescription: "벼,맥류의 수확량 감소 손해에 대해 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 35%~60% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 3,
-              title: "2025년도 콩·팥 보급종 신청 안내 [개별신청]",
-              applDate: "2025-04-11 ~ 2025-12"
+              insuranceId: 3,
+              insuranceName: "원예시설 농작물재해보험",
+              insuranceDescription: "농업용 시설물, 부대시설에 대한 피해와 시설작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 4,
-              title: "2025년 전문상담 및 현장코칭 사업 신청안내",
-              applDate: "2025-03-24 ~ 2025-11"
+              insuranceId: 4,
+              insuranceName: "밭작물 농작물재해보험",
+              insuranceDescription: "밭작물의 수확량 감소 보장과 작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 10%~40%"
             },
             {
-              policyId: 5,
-              title: "밭작물 종자 1차 개별신청",
-              applDate: "2025-02-04 ~ 2025-12-31"
+              insuranceId: 5,
+              insuranceName: "버섯 농작물재해보험",
+              insuranceDescription: "농업용시설물, 부대시설에 대한 피해와 버섯작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             }
           ]
         }
         console.log('Setting demo data:', demoData)
-        setPolicyData(demoData)
+        setDisplayData(demoData)
         clearInterval(progressInterval)
         setLoading(false)
         return
       }
 
       try {
-        const response = await fetch(`/api/policies/${farmId}/${cropId}`)
+        const response = await fetch(`/api/insurances/${farmId}/${cropId}`)
         if (response.ok) {
           const data = await response.json()
-          setPolicyData(data)
+          setDisplayData(data)
         } else {
-          console.error('Failed to fetch policy data')
+          console.error('Failed to fetch insurance data')
           // Fallback demo data
           const demoData = {
-            policyRecommendList: [],
-            policyOtherList: [
+            insuranceRecommendList: [],
+            insuranceOtherList: [
               {
-                policyId: 1,
-                title: "2025 농업인·농대생 생성형 AI 활용 경진대회",
-                applDate: "2025-09-01 ~ 2025-09-26"
+                insuranceId: 1,
+                insuranceName: "과수작물 농작물재해보험",
+                insuranceDescription: "과수의 손해에 대해 보장해 주는 보험",
+                insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
               },
               {
-                policyId: 2,
-                title: "[상시 접수] 2025년 우체국 쇼핑 연계 농촌융복합산업 브랜드관 하반기 입점 안내",
-                applDate: "2025-06 ~ 2025-12"
+                insuranceId: 2,
+                insuranceName: "벼·맥류 농작물재해보험",
+                insuranceDescription: "벼,맥류의 수확량 감소 손해에 대해 보장해 주는 보험",
+                insuranceSupportInfo: "정부 지원 35%~60% + 지차체 지원 15%~40%"
               },
               {
-                policyId: 3,
-                title: "2025년도 콩·팥 보급종 신청 안내 [개별신청]",
-                applDate: "2025-04-11 ~ 2025-12"
+                insuranceId: 3,
+                insuranceName: "원예시설 농작물재해보험",
+                insuranceDescription: "농업용 시설물, 부대시설에 대한 피해와 시설작물의 생산비를 보장해 주는 보험",
+                insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
               },
               {
-                policyId: 4,
-                title: "2025년 전문상담 및 현장코칭 사업 신청안내",
-                applDate: "2025-03-24 ~ 2025-11"
+                insuranceId: 4,
+                insuranceName: "밭작물 농작물재해보험",
+                insuranceDescription: "밭작물의 수확량 감소 보장과 작물의 생산비를 보장해 주는 보험",
+                insuranceSupportInfo: "정부 지원 50% + 지차체 지원 10%~40%"
               },
               {
-                policyId: 5,
-                title: "밭작물 종자 1차 개별신청",
-                applDate: "2025-02-04 ~ 2025-12-31"
+                insuranceId: 5,
+                insuranceName: "버섯 농작물재해보험",
+                insuranceDescription: "농업용시설물, 부대시설에 대한 피해와 버섯작물의 생산비를 보장해 주는 보험",
+                insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
               }
             ]
           }
-          setPolicyData(demoData)
+          setDisplayData(demoData)
         }
       } catch (error) {
-        console.error('Error fetching policy data:', error)
+        console.error('Error fetching insurance data:', error)
         // Fallback demo data
         const demoData = {
-          policyRecommendList: [],
-          policyOtherList: [
+          insuranceRecommendList: [],
+          insuranceOtherList: [
             {
-              policyId: 1,
-              title: "2025 농업인·농대생 생성형 AI 활용 경진대회",
-              applDate: "2025-09-01 ~ 2025-09-26"
+              insuranceId: 1,
+              insuranceName: "과수작물 농작물재해보험",
+              insuranceDescription: "과수의 손해에 대해 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 2,
-              title: "[상시 접수] 2025년 우체국 쇼핑 연계 농촌융복합산업 브랜드관 하반기 입점 안내",
-              applDate: "2025-06 ~ 2025-12"
+              insuranceId: 2,
+              insuranceName: "벼·맥류 농작물재해보험",
+              insuranceDescription: "벼,맥류의 수확량 감소 손해에 대해 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 35%~60% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 3,
-              title: "2025년도 콩·팥 보급종 신청 안내 [개별신청]",
-              applDate: "2025-04-11 ~ 2025-12"
+              insuranceId: 3,
+              insuranceName: "원예시설 농작물재해보험",
+              insuranceDescription: "농업용 시설물, 부대시설에 대한 피해와 시설작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             },
             {
-              policyId: 4,
-              title: "2025년 전문상담 및 현장코칭 사업 신청안내",
-              applDate: "2025-03-24 ~ 2025-11"
+              insuranceId: 4,
+              insuranceName: "밭작물 농작물재해보험",
+              insuranceDescription: "밭작물의 수확량 감소 보장과 작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 10%~40%"
             },
             {
-              policyId: 5,
-              title: "밭작물 종자 1차 개별신청",
-              applDate: "2025-02-04 ~ 2025-12-31"
+              insuranceId: 5,
+              insuranceName: "버섯 농작물재해보험",
+              insuranceDescription: "농업용시설물, 부대시설에 대한 피해와 버섯작물의 생산비를 보장해 주는 보험",
+              insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
             }
           ]
         }
-        setPolicyData(demoData)
+        setDisplayData(demoData)
       } finally {
         clearInterval(progressInterval)
         setLoading(false)
       }
     }
 
-    fetchPolicyData()
+    fetchInsuranceData()
   }, [farmId, cropId])
 
-  console.log('PolicyPage render - loading:', loading, 'policyData:', policyData)
+  console.log('InsurancePage render - loading:', loading, 'displayData:', displayData)
 
-  // policyData가 없으면 기본 데이터 사용
-  const displayData = policyData || {
-    policyRecommendList: [],
-    policyOtherList: [
+  // displayData가 없으면 기본 데이터 사용
+  const fallbackData = {
+    insuranceRecommendList: [],
+    insuranceOtherList: [
       {
-        policyId: 1,
-        title: "2025 농업인·농대생 생성형 AI 활용 경진대회",
-        applDate: "2025-09-01 ~ 2025-09-26"
+        insuranceId: 1,
+        insuranceName: "과수작물 농작물재해보험",
+        insuranceDescription: "과수의 손해에 대해 보장해 주는 보험",
+        insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
       },
       {
-        policyId: 2,
-        title: "[상시 접수] 2025년 우체국 쇼핑 연계 농촌융복합산업 브랜드관 하반기 입점 안내",
-        applDate: "2025-06 ~ 2025-12"
+        insuranceId: 2,
+        insuranceName: "벼·맥류 농작물재해보험",
+        insuranceDescription: "벼,맥류의 수확량 감소 손해에 대해 보장해 주는 보험",
+        insuranceSupportInfo: "정부 지원 35%~60% + 지차체 지원 15%~40%"
       },
       {
-        policyId: 3,
-        title: "2025년도 콩·팥 보급종 신청 안내 [개별신청]",
-        applDate: "2025-04-11 ~ 2025-12"
+        insuranceId: 3,
+        insuranceName: "원예시설 농작물재해보험",
+        insuranceDescription: "농업용 시설물, 부대시설에 대한 피해와 시설작물의 생산비를 보장해 주는 보험",
+        insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
       },
       {
-        policyId: 4,
-        title: "2025년 전문상담 및 현장코칭 사업 신청안내",
-        applDate: "2025-03-24 ~ 2025-11"
+        insuranceId: 4,
+        insuranceName: "밭작물 농작물재해보험",
+        insuranceDescription: "밭작물의 수확량 감소 보장과 작물의 생산비를 보장해 주는 보험",
+        insuranceSupportInfo: "정부 지원 50% + 지차체 지원 10%~40%"
       },
       {
-        policyId: 5,
-        title: "밭작물 종자 1차 개별신청",
-        applDate: "2025-02-04 ~ 2025-12-31"
+        insuranceId: 5,
+        insuranceName: "버섯 농작물재해보험",
+        insuranceDescription: "농업용시설물, 부대시설에 대한 피해와 버섯작물의 생산비를 보장해 주는 보험",
+        insuranceSupportInfo: "정부 지원 50% + 지차체 지원 15%~40%"
       }
     ]
   }
 
   // 안전하게 배열이 존재하는지 확인
-  const recommendList = displayData?.policyRecommendList || []
-  const otherList = displayData?.policyOtherList || []
+  const recommendList = displayData?.insuranceRecommendList || []
+  const otherList = displayData?.insuranceOtherList || []
+
+  // 보험상품명의 시작 단어에 따라 이미지 매칭
+  const getInsuranceImage = (insuranceName: string) => {
+    if (insuranceName.includes('과수작물')) {
+      return '/src/images/보험_과수작물.png'
+    } else if (insuranceName.includes('벼·맥류') || insuranceName.includes('벼') || insuranceName.includes('맥류')) {
+      return '/src/images/보험_벼·맥류.png'
+    } else if (insuranceName.includes('원예시설')) {
+      return '/src/images/보험_원예시설.png'
+    } else if (insuranceName.includes('밭작물')) {
+      return '/src/images/보험_밭작물.png'
+    } else if (insuranceName.includes('버섯')) {
+      return '/src/images/보험_버섯.png'
+    } else {
+      return '/src/images/보험.png' // 기본 보험 아이콘
+    }
+  }
 
   if (loading) {
     return (
       <LoadingScreen
-        title="지원정책 정보를 불러오는 중..."
+        title="보험상품 정보를 불러오는 중..."
         subtitle="잠시만 기다려 주세요."
-        headerTitle="콕! 맞는 정부 지원정책"
+        headerTitle="콕! 맞는 보험상품"
         onHomeClick={() => navigate('/')}
       />
     )
@@ -218,7 +254,7 @@ function PolicyPage() {
         {/* Header */}
         <header className="px-4 pt-3 pb-2 flex items-center justify-between relative">
           <BackButton />
-          <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">콕! 맞는 정부 지원정책</h1>
+          <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">콕! 맞는 보험상품</h1>
           <div className="flex items-center gap-2">
             <button onClick={() => navigate('/')} className="w-5 h-5">
               <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
@@ -233,7 +269,7 @@ function PolicyPage() {
         {recommendList.length > 0 && (
           <div className="px-4 py-3">
             <p className="text-[#4293A0] text-sm leading-relaxed">
-              김OO님의 현재 등록된 영농 정보에 맞춰 가입할 수 있는 지원정책을 추천드려요.
+              김OO님의 현재 등록된 영농 정보에 맞춰 가입할 수 있는 보험상품을 추천드려요.
             </p>
           </div>
         )}
@@ -250,18 +286,18 @@ function PolicyPage() {
               <div className="mb-4">
                 {recommendList.map((product) => (
                     <div 
-                      key={product.policyId} 
+                      key={product.insuranceId} 
                       className="bg-white p-4 border border-gray-100 mb-3 cursor-pointer hover:bg-gray-50"
-                      onClick={() => navigate(`/policy-detail/${product.policyId}`)}
+                      onClick={() => navigate(`/insurance-detail/${product.insuranceId}`)}
                     >
                       <div className="flex items-start gap-3">
                         {/* Content */}
                         <div className="flex-1">
                           <h3 className="text-base font-semibold text-gray-900 mb-1">
-                            {product.title}
+                            {product.insuranceName}
                           </h3>
                           <p className="text-sm text-gray-600 line-clamp-2">
-                            {product.applDate}
+                            {product.insuranceDescription}
                           </p>
                         </div>
                         
@@ -289,14 +325,14 @@ function PolicyPage() {
                 ))}
               </div>
             ) : (
-              /* No Matching Policies Found */
+              /* No Matching Insurance Found */
               <div className="mb-4">
                 <div className="bg-[#4293A0]/10 rounded-lg p-4 text-center">
                   {/* Illustration */}
                   <div className="flex justify-center mb-4">
                     <img 
                       src="/src/images/정보리스트_없을때.png" 
-                      alt="정책 없음" 
+                      alt="보험 없음" 
                       className="w-45 h-45 object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -316,14 +352,14 @@ function PolicyPage() {
                   <div className="text-[20px] font-bold mb-4">
                     <p className="mb-1">김OO님, 현재 등록된 영농 정보</p>
                     <p className="mb-1">(토마토, 충북 영동군, 만 45세)에</p>
-                    <p className="mb-1">콕! 맞는 지원정책은 현재</p>
+                    <p className="mb-1">콕! 맞는 보험상품은 현재</p>
                     <p className="mb-2">찾을 수 없어요.</p>
-                    <p className="text-[17px] text-gray-600 mt-4 mb-6 font-bold">새로운 정책이 업데이트되면 알려드릴게요.</p>
+                    <p className="text-[17px] text-gray-600 mt-4 mb-6 font-bold">새로운 보험상품이 업데이트되면 알려드릴게요.</p>
                   </div>
                   
                   {/* Button */}
                   <button className="w-full h-14 bg-[#4293A0] mb-2 text-white rounded-xl text-lg font-light">
-                    정부 지원정책 알림 신청하기
+                    보험상품 알림 신청하기
                   </button>
                 </div>
               </div>
@@ -338,21 +374,21 @@ function PolicyPage() {
 
             {/* Other Products Section */}
             <div className="py-3">
-              <h2 className="text-base font-semibold text-gray-700 mb-3 pl-4">다른 정부 지원정책 보기</h2>
+              <h2 className="text-base font-semibold text-gray-700 mb-3 pl-4">다른 보험상품 보기</h2>
               
               <div className="space-y-3">
                 {otherList.map((product) => (
                     <div 
-                      key={product.policyId} 
+                      key={product.insuranceId} 
                       className="bg-white p-4 border border-gray-100 cursor-pointer hover:bg-gray-50"
-                      onClick={() => navigate(`/policy-detail/${product.policyId}`)}
+                      onClick={() => navigate(`/insurance-detail/${product.insuranceId}`)}
                     >
                       <div className="flex items-center gap-3">
                         {/* Icon */}
                         <div className="w-9 h-9 ml-1 rounded-full flex items-center justify-center flex-shrink-0 ring-1 ring-gray-500">
                           <img 
-                            src="/src/images/정책.png" 
-                            alt="정책 아이콘" 
+                            src={getInsuranceImage(product.insuranceName)} 
+                            alt="보험 아이콘" 
                             className="w-7 h-7 object-contain"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
@@ -361,7 +397,7 @@ function PolicyPage() {
                               if (parent) {
                                 const emojiDiv = document.createElement('div')
                                 emojiDiv.className = 'text-2xl'
-                                emojiDiv.textContent = '📋'
+                                emojiDiv.textContent = '🛡️'
                                 parent.appendChild(emojiDiv)
                               }
                             }}
@@ -371,10 +407,13 @@ function PolicyPage() {
                         {/* Content */}
                         <div className="flex-1 ml-2">
                           <h3 className="text-[14px] font-bold text-gray-900 mb-1">
-                            {product.title}
+                            {product.insuranceName}
                           </h3>
-                            <p className="text-[10px] text-gray-400 line-clamp-2">
-                            신청기간: {product.applDate}
+                          <p className="text-[10px] text-gray-400 line-clamp-2 mb-1">
+                            {product.insuranceDescription}
+                          </p>
+                          <p className="text-[10px] text-blue-600">
+                            {product.insuranceSupportInfo}
                           </p>
                         </div>
                         
@@ -409,4 +448,4 @@ function PolicyPage() {
   )
 }
 
-export default PolicyPage
+export default InsurancePage

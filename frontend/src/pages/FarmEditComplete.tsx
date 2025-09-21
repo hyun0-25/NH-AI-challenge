@@ -22,7 +22,7 @@ function FarmEditComplete() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-          <h1 className="text-[24px] font-semibold mb-6 mt-6">
+          <h1 className="text-md font-medium mb-6 mt-6">
             <span className="text-gray-900">작물/농장 정보 수정 </span>
             <span className="text-[#4293A0]">완료</span>
           </h1>

@@ -79,3 +79,19 @@
   display: none;  /* Safari and Chrome */
 }
 
+/* Notification animation */
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -150%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
