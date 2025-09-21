@@ -123,10 +123,10 @@ function FarmManage() {
             <BackButton />
             <h1 className="text-md font-semibold absolute left-1/2 transform -translate-x-1/2">내 영농/농장 관리</h1>
             <div className="flex items-center gap-2">
-              <button onClick={() => navigate('/')} className="w-6 h-6">
+              <button onClick={() => navigate('/')} className="w-5 h-5">
                 <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
               </button>
-              <button className="w-6 h-6">
+              <button className="w-5 h-5">
                 <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
               </button>
             </div>
@@ -147,31 +147,31 @@ function FarmManage() {
 
           {/* Instruction Text */}
           <div className=" text-center">
-            <p className="text-sm  leading-relaxed">
+            <p className="text-[15px]  leading-relaxed">
               이미 있는 농장의 작물을 추가하는 경우,
-            </p><p className="text-sm  leading-relaxed">
+            </p>            <p className="text-sm  leading-relaxed">
               아래 해당하는 농장에 있는 + 버튼을 눌러 
             </p>
-            <p className="text-sm  leading-relaxed">
+            <p className="text-[15px]  leading-relaxed">
               작물을 추가해보세요.
             </p>
             <br/>
-            <p className="text-sm  leading-relaxed">
+            <p className="text-[15px]  leading-relaxed">
               농장을 원하는 위치로 이동해 보세요
             </p>
-            <p className="text-sm  leading-relaxed">
+            <p className="text-[15px]  leading-relaxed">
               가장 위에 있는 농장이 내 대표농장으로 설정돼요
             </p>
           </div>
 
           {/* Farm List */}
-          <div className="space-y-3 pb-20 overflow-y-auto flex-1">
+          <div className="space-y-3 pb-20 overflow-y-auto flex-1 px-1 py-5">
             {farms.map((farm, farmIndex) => (
-              <div key={farm.farmId} className="bg-white rounded-lg p-4 shadow-md relative">
+              <div key={farm.farmId} className="bg-white rounded-lg p-4 shadow-[0_0_6px_rgba(0,0,0,0.08)] relative ring-2 ring-gray-100">
                   {/* Delete Button */}
                   <button
                     onClick={() => handleDeleteFarm(farm.farmId)}
-                    className="absolute top-0 left-0 w-5 h-5 bg-[#4293A0] text-white rounded-full flex items-center justify-center text-lg hover:bg-[#4293A0]"
+                    className="absolute -top-2 left-0 w-5 h-5 bg-[#4293A0] text-white rounded-full flex items-center justify-center text-lg hover:bg-[#4293A0]"
                   >
                     -
                   </button>
