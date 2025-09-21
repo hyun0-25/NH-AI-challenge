@@ -15,6 +15,12 @@ public class Insurance extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long insuranceId;
 
+    private String insuranceName;
+
+    private String insuranceSubName;
+
+    private String insuranceDescription;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private InsuranceConditionType insuranceConditionType;

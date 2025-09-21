@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard.tsx'
 import FarmManage from './pages/FarmManage.tsx'
 import RegistrationComplete from './pages/RegistrationComplete.tsx'
 import FarmEditComplete from './pages/FarmEditComplete.tsx'
+import PolicyPage from './pages/PolicyPage.tsx'
+import LoadingPage from './pages/LoadingPage.tsx'
 
 export type Crop = {
   id: string
@@ -116,6 +118,8 @@ function App() {
           <Route path="/manage" element={<FarmManage />} />
           <Route path="/complete" element={<RegistrationComplete />} />
           <Route path="/farm-edit-complete" element={<FarmEditComplete />} />
+          <Route path="/policy" element={<PolicyPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

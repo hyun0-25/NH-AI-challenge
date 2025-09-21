@@ -1,6 +1,11 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import os
 import pymysql
-import settings
+import settings as settings
+
 
 def mysql_client():
     """
@@ -13,6 +18,6 @@ def mysql_client():
         port=int(settings.DATABASE_PORT),
         user=settings.DATABASE_USER,
         password=settings.DATABASE_PASSWORD,
-        database=settings.DATABASE_NAME
+        database=settings.DATABASE_NAME,
     )
     return connection

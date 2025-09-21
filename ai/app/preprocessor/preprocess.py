@@ -1,6 +1,11 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from langchain_core.documents import Document
 from preprocessor import select_table
+
 
 def fotmmated_document(table_name: str) -> str:
     """
@@ -17,16 +22,17 @@ def fotmmated_document(table_name: str) -> str:
     processed_docs = []
     for idx, row in table.iterrows():
         result_field = _combine_text_fields(row=row, table_name=table_name)
-    
+
         docs = Document(
             page_content=result_field,
             metadata={
                 "doc_name": table_name,
-                "doc_id": row.get(f'{table_name}_id', '')
-            }
+                "doc_id": row.get(f"{table_name}_id", ""),
+            },
         )
         processed_docs.append(docs)
     return processed_docs
+
 
 def _combine_text_fields(row: pd.Series, table_name: str) -> str:
     """

@@ -1,16 +1,26 @@
 package com.project.backend.policies.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.backend.ai.dto.request.RecommendRequestDto;
+import com.project.backend.ai.dto.response.RecommendResponseDto;
+import com.project.backend.ai.service.RecommendService;
+import com.project.backend.farm.domain.FarmCrop;
+import com.project.backend.farm.exception.FarmErrorCode;
+import com.project.backend.farm.repository.FarmCropRepository;
+import com.project.backend.global.exception.BaseException;
 import com.project.backend.policies.domain.Policy;
-import com.project.backend.policies.dto.response.PolicyListResponseDto;
-import com.project.backend.policies.dto.response.PolicyResponseDto;
+import com.project.backend.policies.dto.response.*;
+import com.project.backend.policies.exception.PolicyErrorCode;
 import com.project.backend.policies.repository.PolicyJdbcRepository;
 import com.project.backend.policies.repository.PolicyRepository;
+import com.project.backend.users.domain.User;
+import com.project.backend.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -20,8 +30,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -30,8 +43,13 @@ import java.util.List;
 public class PolicyService {
     @Value("${POLICY_API_KEY}")
     private String policyApiKey;
+    @Value("${TEST_USER_UUID}")
+    private UUID userId;
+    private final UserRepository userRepository;
     private final PolicyRepository policyRepository;
+    private final FarmCropRepository farmCropRepository;
     private final PolicyJdbcRepository policyJdbcRepository;
+    private final RecommendService recommendService;
 
     public void callPolicyApi() throws IOException {
         log.info("{ PolicyService } : policy api 저장");
@@ -100,6 +118,45 @@ public class PolicyService {
 //        policyRepository.saveAll(policyList);  // saveAll
         policyJdbcRepository.bulkInsert(policyList);  // bulkInsert
         log.info("{ PolicyService } : policy api 저장 성공");
+    }
+
+    public PolicyRecommendResponseDto getPolicyRecommend(Long farmId, Long cropId) {
+        log.info("{ PolicyService } : policy 추천 조회");
+        User user = userRepository.findByUUIDAndIsDeleted(userId);
+        FarmCrop farmCrop = farmCropRepository.findFarmCropByFarmIdAndCropIdAndIsDeleted(farmId, cropId);
+        if (farmCrop == null)
+            throw BaseException.type(FarmErrorCode.FARM_CROP_NOT_FOUND);
+
+        RecommendResponseDto recommendResponseDto = recommendService.getAIRecommendId("policy", user, farmCrop);
+
+        // 모든 정책 정보
+        List<Policy> policyList = policyRepository.findAll();
+
+        List<PolicyRecommendListResponseDto> policyRecommendList = new ArrayList<>();
+        List<PolicyRecommendListResponseDto> policyOtherList = new ArrayList<>();
+        // 맞춤 정보 & 이외 정보 그룹핑
+        for (Policy policy : policyList) {
+            if (recommendResponseDto.recommendId().contains(policy.getPolicyId())) {
+                policyRecommendList.add(PolicyRecommendListResponseDto.fromPolicyList(policy));
+            } else {
+                policyOtherList.add(PolicyRecommendListResponseDto.fromPolicyList(policy));
+            }
+        }
+
+        log.info("{ PolicyService } : policy 추천 조회 성공");
+        return PolicyRecommendResponseDto.fromPolicyRecommend(policyRecommendList, policyOtherList);
+    }
+
+    public PolicyDetailResponseDto getPolicy(Long policyId) {
+        log.info("{ PolicyService } : policy 상세조회");
+        Policy policy = policyRepository.findPolicyByPolicyId(policyId);
+        if (policy == null)
+            throw BaseException.type(PolicyErrorCode.POLICY_NOT_FOUND);
+
+        PolicyDetailResponseDto policyDetailResponseDto = PolicyDetailResponseDto.fromPolicy(policy);
+
+        log.info("{ PolicyService } : policy 상세조회 성공");
+        return policyDetailResponseDto;
     }
 
 

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import MobileFrame from '../components/MobileFrame'
-import { useAppState } from '../App'
 
 type FarmData = {
   farmId: number
@@ -23,24 +22,86 @@ type FarmData = {
 }
 
 function Dashboard() {
-  const { cropsCatalog } = useAppState()
   const navigate = useNavigate()
   const [farms, setFarms] = useState<FarmData[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedCropId, setSelectedCropId] = useState<string | null>(null)
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const fetchFarms = async () => {
+      // Start progress animation
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(progressInterval)
+            return 100
+          }
+          return prev + 2
+        })
+      }, 50)
+
       try {
         const response = await fetch('/api/farms')
         if (response.ok) {
           const data = await response.json()
           setFarms(data)
+          
+          // 첫 번째 농장의 첫 번째 작물을 기본 선택으로 설정
+          if (data.length > 0 && data[0].cropCategoryResponseDtoList.length > 0) {
+            const firstFarm = data[0]
+            const firstCrop = firstFarm.cropCategoryResponseDtoList[0].cropVarietyResponses[0]
+            setSelectedCropId(`${firstFarm.farmId}-${firstCrop.cropVarietyId}`)
+          }
         } else {
           console.error('Failed to fetch farms')
+          // Fallback demo data
+          const demoFarms: FarmData[] = [{
+            farmId: 1,
+            farmZipCode: "12345",
+            farmLocation: "서울특별시 강남구",
+            farmLocationDetail: "테헤란로 123",
+            farmType: "ORCHARD",
+            farmTypeOtherDescription: null,
+            farmArea: 1000,
+            farmAreaUnitType: "M2",
+            cropCategoryResponseDtoList: [{
+              cropCategoryId: 1,
+              cropCategoryName: "두류",
+              cropVarietyResponses: [
+                { cropVarietyId: 1, cropVarietyName: "콩" },
+                { cropVarietyId: 2, cropVarietyName: "팥" }
+              ]
+            }]
+          }]
+          setFarms(demoFarms)
+          setSelectedCropId("1-1")
         }
       } catch (error) {
         console.error('Error fetching farms:', error)
+        // Fallback demo data
+        const demoFarms: FarmData[] = [{
+          farmId: 1,
+          farmZipCode: "12345",
+          farmLocation: "서울특별시 강남구",
+          farmLocationDetail: "테헤란로 123",
+          farmType: "ORCHARD",
+          farmTypeOtherDescription: null,
+          farmArea: 1000,
+          farmAreaUnitType: "M2",
+          cropCategoryResponseDtoList: [{
+            cropCategoryId: 1,
+            cropCategoryName: "두류",
+            cropVarietyResponses: [
+              { cropVarietyId: 1, cropVarietyName: "콩" },
+              { cropVarietyId: 2, cropVarietyName: "팥" }
+            ]
+          }]
+        }]
+        setFarms(demoFarms)
+        setSelectedCropId("1-1")
       } finally {
+        clearInterval(progressInterval)
         setLoading(false)
       }
     }
@@ -62,12 +123,87 @@ function Dashboard() {
   if (loading) {
     return (
       <MobileFrame>
-        <div className="w-full h-full bg-white mobile-safe-area flex items-center justify-center">
-          <div className="text-gray-500">로딩 중...</div>
+        <div className="w-full h-full mobile-safe-area flex flex-col">
+          {/* Header */}
+          <header className="px-4 pt-3 pb-2 flex items-center justify-between relative bg-white">
+            <div className="text-sm font-medium absolute left-1/2 transform -translate-x-1/2">MY 영농/농장</div>
+            <div className="flex gap-4 ml-auto">
+              <button className="w-5 h-5">
+                <img src="/src/images/bell.png" alt="알림" className="w-full h-full object-contain" />
+              </button>
+              <button onClick={() => navigate('/')} className="w-5 h-5">
+                <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
+              </button>
+              <button className="w-5 h-5">
+                <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
+              </button>
+            </div>
+          </header>
+
+          {/* Loading Content */}
+          <main className="flex-1 flex items-center justify-center px-8 bg-[#4293A0]/10">
+            <div className="text-center">
+                     {/* Loading Image with Progress Bar */}
+                     <div className="mb-6">
+                       <div className="w-48 h-48 mx-auto relative">
+                         {/* Circular Progress Bar */}
+                         <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+                           {/* Background Circle */}
+                           <circle
+                             cx="50"
+                             cy="50"
+                             r="45"
+                             stroke="#E5E7EB"
+                             strokeWidth="4"
+                             fill="none"
+                           />
+                           {/* Progress Circle */}
+                           <circle
+                             cx="50"
+                             cy="50"
+                             r="45"
+                             stroke="#4293A0"
+                             strokeWidth="4"
+                             fill="none"
+                             strokeDasharray={`${2 * Math.PI * 45}`}
+                             strokeDashoffset={`${2 * Math.PI * 45 * (1 - progress / 100)}`}
+                             strokeLinecap="round"
+                             style={{
+                               transition: 'stroke-dashoffset 0.1s ease-in-out'
+                             }}
+                           />
+                         </svg>
+
+                         {/* Center Image */}
+                         <div className="absolute inset-0 flex items-center justify-center">
+                           <div className="w-42 h-42 bg-white rounded-full flex items-center justify-center shadow-lg">
+                             <img 
+                               src="/src/images/로딩중 화면 이미지.png" 
+                               alt="로딩 중" 
+                               className="w-40 h-40 object-contain"
+                             />
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+
+              {/* Loading Text */}
+              <div className="space-y-2">
+                <p className="text-lg font-medium text-gray-800">
+                  농장 정보를 불러오는 중...
+                </p>
+                <p className="text-sm text-gray-600">
+                  잠시만 기다려 주세요.
+                </p>
+              </div>
+            </div>
+          </main>
         </div>
       </MobileFrame>
     )
   }
+
+  console.log('Dashboard render - farms:', farms, 'selectedCropId:', selectedCropId)
 
   return (
     <MobileFrame>
@@ -76,13 +212,13 @@ function Dashboard() {
         <header className="px-4 pt-3 pb-2 flex items-center justify-between relative">
           <div className="text-sm font-medium absolute left-1/2 transform -translate-x-1/2">MY 영농/농장</div>
           <div className="flex gap-4 ml-auto">
-            <button className="w-6 h-6">
+            <button className="w-5 h-5">
               <img src="/src/images/bell.png" alt="알림" className="w-full h-full object-contain" />
             </button>
-            <button onClick={() => navigate('/')} className="w-6 h-6">
+            <button onClick={() => navigate('/')} className="w-5 h-5">
               <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
             </button>
-            <button className="w-6 h-6">
+            <button className="w-5 h-5">
               <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
             </button>
           </div>
@@ -91,8 +227,8 @@ function Dashboard() {
         {/* Welcome Section */}
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
-            <h1 className="text-[20px]"><span className="font-bold">김OO님,</span> 환영합니다</h1>
-            <Link to="/manage" className="text-sm font-bold underline">내 영농/농장 관리</Link>
+            <h1 className="text-[18px]"><span className="font-bold">김OO님,</span> 환영합니다</h1>
+            <Link to="/manage" className="text-sm font-medium underline">내 영농/농장 관리</Link>
           </div>
         </div>
 
@@ -126,22 +262,38 @@ function Dashboard() {
                 <div key={`${farm.farmId}-${variety.cropVarietyId}`} className="relative flex-shrink-0">
                   {/* Representative Badge - only on first variety of first farm */}
                   {isRepresentative && varietyIndex === 0 && (
-                    <div className="absolute -top-2  z-10">
-                      <div className="relative bg-black text-[#4293A0] text-[10px] px-2 py-1 rounded-t-lg rounded-r-lg rounded-br-lg rounded-bl-none">
+                    <div className="absolute -top-3  z-10">
+                      <div className="relative bg-black text-[#03F0FF] text-[10px] font-light px-4 py-2 rounded-t-lg rounded-r-lg rounded-br-lg rounded-bl-none">
                         대표
                       </div>
                     </div>
                   )}
                   
                   {/* Speech Bubble Card */}
-                  <div className="relative bg-[#4293A0] rounded-2xl p-2 text-white w-35 h-40 flex flex-col">
-                    {/* Check Icon */}
-                    <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-white flex items-center justify-center">
-                      <span className="text-[#4293A0] text-xs">✓</span>
-                    </div>
+                  <button 
+                    onClick={() => {
+                      const cropKey = `${variety.farmInfo.farmId}-${variety.cropVarietyId}`
+                      setSelectedCropId(cropKey)
+                    }}
+                    className={`relative rounded-2xl p-2 w-24 h-34 flex flex-col ${
+                      selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` 
+                        ? 'bg-[#4293A0]' 
+                        : 'bg-gray-200'
+                    } text-white`}
+                  >
+                    {/* Check Icon - only show when selected */}
+                    {selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` && (
+                      <div className="absolute top-2 right-2 w-4 h-4 rounded-full bg-white flex items-center justify-center">
+                        <img 
+                          src="/src/images/check_green.png" 
+                          alt="체크" 
+                          className="w-2 h-2 object-contain"
+                        />
+                      </div>
+                    )}
                     
                     {/* Crop Image */}
-                    <div className="w-12 h-12 flex items-center justify-center mb-2 mx-auto">
+                    <div className="w-11 h-11 flex items-center justify-center mb-1 mt-3 mx-auto">
                       <img 
                         src={getImageSrc(variety.categoryName)}
                         alt={variety.categoryName}
@@ -161,60 +313,110 @@ function Dashboard() {
                     </div>
                     
                     {/* Variety Name */}
-                    <div className="text-sm font-semibold mb-1 text-center">
+                    <div className={`text-[12px] font-semibold mb-1 text-center ${
+                      selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` 
+                        ? 'text-white' 
+                        : 'text-black opacity-60'
+                    }`}>
                       {variety.cropVarietyName}
                     </div>
                     
                     {/* Farm Info */}
-                    <div className="text-xs opacity-90 mb-1 text-center">
+                    <div className={`text-[10px] mb-1 text-center ${
+                      selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` 
+                        ? 'text-white opacity-90' 
+                        : 'text-black opacity-50'
+                    }`}>
                       {variety.farmInfo.farmLocation.split(' ').slice(0, 2).join(' ')}
                     </div>
-                    <div className="text-xs opacity-90 text-center">
+                    <div className={`text-[10px] mb-2 text-center ${
+                      selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` 
+                        ? 'text-white opacity-90' 
+                        : 'text-black opacity-50'
+                    }`}>
                       {formatArea(variety.farmInfo.farmArea, variety.farmInfo.farmAreaUnitType)}
                     </div>
                     
                     {/* Speech Bubble Tail */}
-                    <div className="absolute -bottom-1 left-4 w-2 h-2 bg-[#4293A0] transform rotate-45"></div>
-                  </div>
+                    <div className={`absolute -bottom-2 left-1/2 transform -translate-x-1/2 rotate-45 w-4 h-4 ${
+                      selectedCropId === `${variety.farmInfo.farmId}-${variety.cropVarietyId}` 
+                        ? 'bg-[#4293A0]' 
+                        : 'bg-gray-200'
+                    }`}></div>
+                  </button>
                 </div>
               ))
             })}
           </div>
-
-          {/* Recommendation Cards */}
-          <div className="space-y-2 py-4">
-            {[
-              '내 농장에 콕! 맞는 보험상품 보러가기',
-              '내 농장에 콕! 맞는 정부 지원정책 보러가기', 
-              '내 농장에 콕! 맞는 NH농협 금융상품 보러가기'
-            ].map(text => (
-              <button key={text} className="w-full h-12 bg-white shadow-sm rounded-xl px-4 flex items-center justify-between">
-                <span className="text-sm text-gray-700">{text}</span>
-                <span className="text-gray-400">›</span>
-              </button>
-            ))}
-          </div>
         </main>
 
-        {/* AI Chatbot Section */}
-        <div className="px-4 pb-4">
-          <div className="bg-white rounded-2xl p-4 shadow-sm">
-            <div className="text-center mb-3">
-              <div className="flex justify-center gap-2 mb-2">
-                <div className="w-8 h-8 bg-yellow-200 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🧅</span>
-                </div>
-                <div className="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm">🥚</span>
-                </div>
-              </div>
-              <div className="text-sm font-medium text-gray-800 mb-1">내 농장 정보를 분석해</div>
-              <div className="text-xs text-gray-600 mb-2">보험·정책·금융 상품을 맞춤 추천해드립니다.</div>
-              <div className="text-xs text-gray-500">궁금한 점이 있으신가요?</div>
-            </div>
-            <button className="w-full h-12 bg-[#4293A0] text-white rounded-lg text-sm font-medium">
-              AI 챗봇과 상담 시작하기
+        {/* Recommendation Cards and AI Chatbot Section */}
+        <div className="bg-gray-100">
+          <div className="space-y-5 px-4 pt-5">
+            <button 
+              onClick={() => {
+                if (selectedCropId) {
+                  const [farmId, cropId] = selectedCropId.split('-')
+                  navigate(`/policy?farmId=${farmId}&cropId=${cropId}`)
+                }
+              }}
+              className="w-full h-11 bg-white font-medium shadow-sm rounded-lg pl-5 pr-2 flex items-center justify-between"
+            >
+              <span className="text-sm text-gray-700">내 농장에 콕! 맞는 보험상품 보러가기</span>
+              <img src="/src/images/chevron-right1.png" alt="화살표" className="w-5 h-5" />
             </button>
+            <button 
+              onClick={() => {
+                if (selectedCropId) {
+                  const [farmId, cropId] = selectedCropId.split('-')
+                  navigate(`/policy?farmId=${farmId}&cropId=${cropId}`)
+                }
+              }}
+              className="w-full h-11 bg-white font-medium shadow-sm rounded-lg pl-5 pr-2 flex items-center justify-between"
+            >
+              <span className="text-sm text-gray-700">내 농장에 콕! 맞는 정부 지원정책 보러가기</span>
+              <img src="/src/images/chevron-right1.png" alt="화살표" className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => {
+                if (selectedCropId) {
+                  const [farmId, cropId] = selectedCropId.split('-')
+                  navigate(`/policy?farmId=${farmId}&cropId=${cropId}`)
+                }
+              }}
+              className="w-full h-11 bg-white font-medium shadow-sm rounded-lg pl-5 pr-2 flex items-center justify-between"
+            >
+              <span className="text-sm text-gray-700">내 농장에 콕! 맞는 NH농협 금융상품 보러가기</span>
+              <img src="/src/images/chevron-right1.png" alt="화살표" className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* AI Chatbot Section */}
+          <div className="px-4 pb-4 pt-6">
+            <div className="bg-white rounded-lg pb-5 pt-2 pl-5 pr-5 shadow-sm">
+              <div className="text-center mb-4">
+                {/* Illustration */}
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src="/src/images/MY영농관리 페이지 이미지.png" 
+                    alt="AI 챗봇 일러스트" 
+                    className="w-32 h-24 object-contain"
+                  />
+                </div>
+                
+                {/* Text Content */}
+                <div className="space-y-1 mb-3">
+                  <div className="text-sm font-medium text-gray-800">내 농장 정보를 분석해</div>
+                  <div className="text-xs text-gray-800">보험·정책·금융 상품을 맞춤 추천해드립니다.</div>
+                </div>
+                
+                <div className="text-xs text-gray-800 mb-4">궁금한 점이 있으신가요?</div>
+              </div>
+              
+              <button className="w-full h-12 bg-[#4293A0] text-white rounded-sm text-sm font-medium">
+                AI 챗봇과 상담 시작하기
+              </button>
+            </div>
           </div>
         </div>
       </div>

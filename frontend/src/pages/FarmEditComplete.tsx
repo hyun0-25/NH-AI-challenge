@@ -11,10 +11,10 @@ function FarmEditComplete() {
         {/* Header */}
         <div className="flex justify-end items-center px-4 pt-3 pb-2">
           <div className="flex gap-4">
-            <button onClick={() => navigate('/')} className="w-6 h-6">
+            <button onClick={() => navigate('/')} className="w-5 h-5">
               <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
             </button>
-            <button className="w-6 h-6">
+            <button className="w-5 h-5">
               <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
             </button>
           </div>
