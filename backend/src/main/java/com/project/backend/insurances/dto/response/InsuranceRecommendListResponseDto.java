@@ -15,7 +15,7 @@ public record InsuranceRecommendListResponseDto(
     public static InsuranceRecommendListResponseDto fromInsuranceList(Insurance insurance) {
         return InsuranceRecommendListResponseDto.builder()
                 .insuranceId(insurance.getInsuranceId())
-                .insuranceName(insurance.getInsuranceName())
+                .insuranceName(insurance.getInsuranceName()+" ("+insurance.getInsuranceVariety()+")")
                 .insuranceDescription(insurance.getInsuranceDescription())
                 .insuranceSupportInfo(
                         "정부 지원 " +

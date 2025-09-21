@@ -8,8 +8,10 @@ import com.project.backend.farm.exception.FarmErrorCode;
 import com.project.backend.farm.repository.FarmCropRepository;
 import com.project.backend.global.exception.BaseException;
 import com.project.backend.insurances.domain.Insurance;
+import com.project.backend.insurances.dto.response.InsuranceDetailResponseDto;
 import com.project.backend.insurances.dto.response.InsuranceRecommendListResponseDto;
 import com.project.backend.insurances.dto.response.InsuranceRecommendResponseDto;
+import com.project.backend.insurances.exception.InsuranceErrorCode;
 import com.project.backend.insurances.respository.InsuranceRepository;
 import com.project.backend.policies.domain.Policy;
 import com.project.backend.policies.dto.response.*;
@@ -48,7 +50,7 @@ public class InsuranceService {
 
 
     public InsuranceRecommendResponseDto getInsuranceRecommend(Long farmId, Long cropId) {
-        log.info("{ InsuranceService } : policy 추천 조회");
+        log.info("{ InsuranceService } : insurance 추천 조회");
         User user = userRepository.findByUUIDAndIsDeleted(userId);
         FarmCrop farmCrop = farmCropRepository.findFarmCropByFarmIdAndCropIdAndIsDeleted(farmId, cropId);
         if (farmCrop == null)
@@ -70,9 +72,20 @@ public class InsuranceService {
             }
         }
 
-        log.info("{ InsuranceService } : policy 추천 조회 성공");
+        log.info("{ InsuranceService } : insurance 추천 조회 성공");
         return InsuranceRecommendResponseDto.fromInsuranceRecommend(insuranceRecommendList, insuranceOtherList);
     }
 
+    public InsuranceDetailResponseDto getInsurance(Long insuranceId) {
+        log.info("{ InsuranceService } : insurance 상세조회");
+        Insurance insurance = insuranceRepository.findInsuranceByInsuranceId(insuranceId);
+        if (insurance == null)
+            throw BaseException.type(InsuranceErrorCode.INSURANCE_NOT_FOUND);
+
+        InsuranceDetailResponseDto insuranceDetailResponseDto = InsuranceDetailResponseDto.fromInsurance(insurance);
+
+        log.info("{ InsuranceService } : insurance 상세조회 성공");
+        return insuranceDetailResponseDto;
+    }
 
 }

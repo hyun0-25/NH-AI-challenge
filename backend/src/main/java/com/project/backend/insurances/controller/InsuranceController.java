@@ -1,5 +1,6 @@
 package com.project.backend.insurances.controller;
 
+import com.project.backend.insurances.dto.response.InsuranceDetailResponseDto;
 import com.project.backend.insurances.dto.response.InsuranceRecommendResponseDto;
 import com.project.backend.insurances.service.InsuranceService;
 import com.project.backend.policies.dto.response.PolicyDetailResponseDto;
@@ -33,6 +34,17 @@ public class InsuranceController {
         InsuranceRecommendResponseDto insuranceRecommendResponseDto = insuranceService.getInsuranceRecommend(farmId, cropId);
         log.info("{ InsuranceController } : insurance 추천 성공");
         return ResponseEntity.ok(insuranceRecommendResponseDto);
+    }
+
+    @GetMapping("/{insuranceId}")
+    public ResponseEntity<InsuranceDetailResponseDto> getPolicy(
+            @PathVariable Long insuranceId
+    ) {
+        log.info("{ InsuranceController } : insurance 상세조회 진입");
+        log.info(" >> InsuranceId : " + insuranceId);
+        InsuranceDetailResponseDto insuranceDetailResponseDto = insuranceService.getInsurance(insuranceId);
+        log.info("{ InsuranceController } : insurance 상세조회 성공");
+        return ResponseEntity.ok(insuranceDetailResponseDto);
     }
 
 }
