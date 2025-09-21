@@ -37,19 +37,37 @@
 
 ## 🎬 기능 동작 화면
 ### 1. 농장 정보 등록
-
+<img src="https://github.com/user-attachments/assets/bd252ccd-f54a-4936-ab7c-dc0ada7bf112" width="250" style="border-radius:15px;"/>
 
 ### 2. 내 영농/농장 삭제
-
+<img src="https://github.com/user-attachments/assets/dba35151-5c78-4ed2-a9ab-4070eece2d95" width="250" style="border-radius:15px;"/>
 
 ### 3. 추천 금융·보험·정책 리스트
-
+<table>
+  <tr>
+    <td align="center"><b>정책</b></td>
+    <td align="center"><b>보험</b></td>
+    <td align="center"><b>금융</b></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/a22c2daa-d785-44cb-a1b5-5e37c2d1bc78" width="250" style="border-radius:15px;"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/c4529643-3d8e-4d57-aed8-f692fe3f64d5" width="250" style="border-radius:15px;"/>
+    </td>
+    <td align="center">
+      <img src="https://github.com/user-attachments/assets/4b2f1e9e-8695-4663-805c-ae3348e56c5f" width="250" style="border-radius:15px;"/>
+    </td>
+  </tr>
+</table>
 
 ### 4. AI 챗봇 상담
+<img src="https://github.com/user-attachments/assets/7cdf7bbe-fc82-47c4-9bde-a158bccab781" width="250" style="border-radius:15px;"/>
 
 
-### 5. 맞춤 알리미 푸시
-
+### 5. 맞춤 푸시 알리미
+<img src="https://github.com/user-attachments/assets/89817175-8fbe-4022-a766-7832511f70e2" width="250" style="border-radius:15px;"/>
 
 
 
