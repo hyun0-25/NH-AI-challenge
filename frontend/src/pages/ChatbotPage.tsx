@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import MobileFrame from '../components/MobileFrame'
 import BackButton from '../components/BackButton'
+import LoadingScreen from '../components/LoadingScreen'
 
 interface Message {
   id: number
@@ -36,6 +37,8 @@ function ChatbotPage() {
   ])
   const [inputText, setInputText] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [loadingMessage, setLoadingMessage] = useState({ title: '', subtitle: '' })
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const chatAreaRef = useRef<HTMLDivElement>(null)
 
@@ -225,6 +228,59 @@ function ChatbotPage() {
     return `${year}. ${month}. ${date} ${dayName}`
   }
 
+  const getLoadingMessage = (docName: string) => {
+    switch (docName) {
+      case 'insurance':
+        return {
+          title: '자연재해 보험 상세정보를 확인하고 있습니다',
+          subtitle: '회원님의 농작물을 보호할 수 있는 보험을 찾아드릴게요.'
+        }
+      case 'policy':
+        return {
+          title: '정부 지원정책 상세정보를 조회하고 있습니다',
+          subtitle: '농업인을 위한 혜택과 지원사업을 확인해드릴게요.'
+        }
+      case 'finance':
+        return {
+          title: '농협 금융상품 상세정보를 검색하고 있습니다',
+          subtitle: '농업인 맞춤형 대출상품을 찾아드릴게요.'
+        }
+      default:
+        return {
+          title: '상품 상세정보를 확인하고 있습니다',
+          subtitle: '회원님께 도움이 되는 정보를 찾아드릴게요.'
+        }
+    }
+  }
+
+  const handleDetailClick = (docId: number, docName: string) => {
+    const loadingMsg = getLoadingMessage(docName)
+    setLoadingMessage(loadingMsg)
+    setIsLoading(true)
+    
+    // 로딩 후 상세페이지로 이동
+    setTimeout(() => {
+      if (docName === 'insurance') {
+        navigate(`/insurance-detail/${docId}`)
+      } else if (docName === 'policy') {
+        navigate(`/policy-detail/${docId}`)
+      } else if (docName === 'finance') {
+        navigate(`/product-detail/${docId}`)
+      }
+    }, 2000) // 2초 후 이동
+  }
+
+  // 로딩 중일 때 로딩창 표시
+  if (isLoading) {
+    return (
+      <LoadingScreen
+        title={loadingMessage.title}
+        subtitle={loadingMessage.subtitle}
+        showHeader={false}
+      />
+    )
+  }
+
   return (
     <MobileFrame>
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
@@ -350,15 +406,7 @@ function ChatbotPage() {
                             return (
                               <button
                                 key={index}
-                                onClick={() => {
-                                  if (message.docName === 'insurance') {
-                                    navigate(`/insurance-detail/${docId}`)
-                                  } else if (message.docName === 'policy') {
-                                    navigate(`/policy-detail/${docId}`)
-                                  } else if (message.docName === 'finance') {
-                                    navigate(`/product-detail/${docId}`)
-                                  }
-                                }}
+                                onClick={() => handleDetailClick(docId, message.docName || '')}
                                 className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-1 px-3 rounded transition-colors whitespace-pre-line"
                               >
                                 {`${productName}\n상세보기`}

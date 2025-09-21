@@ -139,7 +139,14 @@ function InsurancePage() {
   }, [farmId, cropId])
 
   if (loading) {
-    return <LoadingScreen progress={progress} />
+    return (
+      <LoadingScreen
+        title="자연재해 보험을 검색하고 있습니다"
+        subtitle="회원님의 농작물을 보호할 수 있는 보험을 찾아드릴게요."
+        headerTitle="콕! 맞는 농작물 재해보험"
+        onHomeClick={() => navigate('/')}
+      />
+    )
   }
 
   if (!displayData) {

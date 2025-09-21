@@ -124,8 +124,8 @@ function Dashboard() {
   if (loading) {
     return (
       <LoadingScreen
-        title="농장 정보를 불러오는 중..."
-        subtitle="잠시만 기다려 주세요."
+        title="농장 정보를 확인하고 있습니다"
+        subtitle="잠시만 기다려주세요."
         onHomeClick={() => navigate('/')}
       />
     )

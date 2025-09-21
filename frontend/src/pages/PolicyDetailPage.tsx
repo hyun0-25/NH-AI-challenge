@@ -21,8 +21,20 @@ interface PolicyDetail {
 function PolicyDetailPage() {
   const { policyId } = useParams<{ policyId: string }>()
   const navigate = useNavigate()
-  const [policyDetail, setPolicyDetail] = useState<PolicyDetail | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [policyDetail, setPolicyDetail] = useState<PolicyDetail>({
+    policyId: 0,
+    title: "",
+    contents: "",
+    eduTarget: "",
+    applDate: "",
+    area: "",
+    chargeAgency: "",
+    chargeDept: null,
+    chargeTel: null,
+    infoUrl: "",
+    totQuantity: "",
+    price: ""
+  })
 
   useEffect(() => {
     const fetchPolicyDetail = async () => {
@@ -37,7 +49,6 @@ function PolicyDetailPage() {
       } catch (error) {
         console.error('Error fetching policy detail:', error)
       } finally {
-        setLoading(false)
       }
     }
 
@@ -46,57 +57,8 @@ function PolicyDetailPage() {
     }
   }, [policyId])
 
-  if (loading) {
-    return (
-      <MobileFrame>
-        <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-          <header className="px-4 pt-3 pb-2 flex items-center justify-between relative bg-white">
-            <BackButton />
-            <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">정책 상세</h1>
-            <div className="flex items-center gap-2">
-              <button onClick={() => navigate('/')} className="w-5 h-5">
-                <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
-              </button>
-              <button className="w-5 h-5">
-                <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
-              </button>
-            </div>
-          </header>
-          <main className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-gray-500">로딩 중...</p>
-            </div>
-          </main>
-        </div>
-      </MobileFrame>
-    )
-  }
 
-  if (!policyDetail) {
-    return (
-      <MobileFrame>
-        <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-          <header className="px-4 pt-3 pb-2 flex items-center justify-between relative bg-white">
-            <BackButton />
-            <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">정책 상세</h1>
-            <div className="flex items-center gap-2">
-              <button onClick={() => navigate('/')} className="w-5 h-5">
-                <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
-              </button>
-              <button className="w-5 h-5">
-                <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
-              </button>
-            </div>
-          </header>
-          <main className="flex-1 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-gray-500">정책 정보를 찾을 수 없습니다.</p>
-            </div>
-          </main>
-        </div>
-      </MobileFrame>
-    )
-  }
+
 
   return (
     <MobileFrame>

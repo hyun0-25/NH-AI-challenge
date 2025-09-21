@@ -86,37 +86,14 @@ function InsuranceDetailPage() {
   if (loading) {
     return (
       <LoadingScreen
-        title="보험상품 정보를 불러오는 중..."
-        subtitle="잠시만 기다려 주세요."
+        title="보험상품 상세정보를 가져오고 있습니다"
+        subtitle="자연재해 보험에 대한 자세한 내용을 확인해드릴게요."
         headerTitle="보험상품 상세"
         onHomeClick={() => navigate('/')}
       />
     )
   }
 
-  if (!insuranceDetail) {
-    return (
-      <MobileFrame>
-        <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
-          <header className="px-4 pt-3 pb-2 flex items-center justify-between relative">
-            <BackButton />
-            <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">보험상품 상세</h1>
-            <div className="flex items-center gap-2">
-              <button onClick={() => navigate('/')} className="w-5 h-5">
-                <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />
-              </button>
-              <button className="w-5 h-5">
-                <img src="/src/images/menu.png" alt="메뉴" className="w-full h-full object-contain" />
-              </button>
-            </div>
-          </header>
-          <div className="flex-1 flex items-center justify-center">
-            <p className="text-gray-500">보험상품 정보를 찾을 수 없습니다.</p>
-          </div>
-        </div>
-      </MobileFrame>
-    )
-  }
 
   return (
     <MobileFrame>

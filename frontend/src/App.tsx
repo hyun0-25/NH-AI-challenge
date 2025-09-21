@@ -15,7 +15,6 @@ import ProductDetailPage from './pages/ProductDetailPage.tsx'
 import InsurancePage from './pages/InsurancePage.tsx'
 import InsuranceDetailPage from './pages/InsuranceDetailPage.tsx'
 import ChatbotPage from './pages/ChatbotPage.tsx'
-import LoadingPage from './pages/LoadingPage.tsx'
 import NotificationPage from './pages/NotificationPage.tsx'
 import NotificationListPage from './pages/NotificationListPage.tsx'
 import NotificationDetailPage from './pages/NotificationDetailPage.tsx'
@@ -135,7 +134,6 @@ function App() {
           <Route path="/insurance" element={<InsurancePage />} />
           <Route path="/insurance-detail/:id" element={<InsuranceDetailPage />} />
           <Route path="/chatbot" element={<ChatbotPage />} />
-          <Route path="/loading" element={<LoadingPage />} />
           <Route path="/notification" element={<NotificationPage />} />
           <Route path="/notification-list" element={<NotificationListPage />} />
           <Route path="/notification-detail" element={<NotificationDetailPage />} />
