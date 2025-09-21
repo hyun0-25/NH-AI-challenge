@@ -49,7 +49,7 @@ function FarmInfo() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-10">
           <BackButton />
-          <h1 className="text-[25px] font-semibold">농장 <span className="text-[#4293A0]">유형</span>과 <span className="text-[#4293A0]">면적</span>을 입력하면</h1>
+          <h1 className="text-md font-medium">농장 <span className="text-[#4293A0]">유형</span>과 <span className="text-[#4293A0]">면적</span>을 입력하면</h1>
           <div className="text-[17px] text-gray-500">알맞은 보험 및 정책을 찾아드려요</div>
         </header>
         <main className="px-4 space-y-10">

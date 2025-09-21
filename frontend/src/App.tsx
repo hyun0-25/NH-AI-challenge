@@ -9,7 +9,14 @@ import FarmManage from './pages/FarmManage.tsx'
 import RegistrationComplete from './pages/RegistrationComplete.tsx'
 import FarmEditComplete from './pages/FarmEditComplete.tsx'
 import PolicyPage from './pages/PolicyPage.tsx'
+import PolicyDetailPage from './pages/PolicyDetailPage.tsx'
+import ProductPage from './pages/ProductPage.tsx'
+import ProductDetailPage from './pages/ProductDetailPage.tsx'
+import InsurancePage from './pages/InsurancePage.tsx'
+import InsuranceDetailPage from './pages/InsuranceDetailPage.tsx'
+import ChatbotPage from './pages/ChatbotPage.tsx'
 import LoadingPage from './pages/LoadingPage.tsx'
+import NotificationPage from './pages/NotificationPage.tsx'
 
 export type Crop = {
   id: string
@@ -119,7 +126,14 @@ function App() {
           <Route path="/complete" element={<RegistrationComplete />} />
           <Route path="/farm-edit-complete" element={<FarmEditComplete />} />
           <Route path="/policy" element={<PolicyPage />} />
+          <Route path="/policy-detail/:policyId" element={<PolicyDetailPage />} />
+          <Route path="/product" element={<ProductPage />} />
+          <Route path="/product-detail/:productId" element={<ProductDetailPage />} />
+          <Route path="/insurance" element={<InsurancePage />} />
+          <Route path="/insurance-detail/:id" element={<InsuranceDetailPage />} />
+          <Route path="/chatbot" element={<ChatbotPage />} />
           <Route path="/loading" element={<LoadingPage />} />
+          <Route path="/notification" element={<NotificationPage />} />
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

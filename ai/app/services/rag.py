@@ -3,12 +3,15 @@ import os
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import click
+from schemas.rag_schema import ChatBotRequest, ChatBotResponse
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+import json
 import settings as settings
+
 
 
 def rag_chain(query: str, doc_name: str):
@@ -86,11 +89,19 @@ def rag_chain(query: str, doc_name: str):
     return output
 
 
-def main(query: str, doc_name: str, persona_info: str):
+def main(request: ChatBotRequest) -> ChatBotResponse:
     """RAG 체인을 실행하여 질문에 대한 답변을 생성합니다."""
-    rag_query = f"{persona_info}\n{query}"
-    rag_response = rag_chain(query=rag_query, doc_name=doc_name)
+    rag_query = f"{request.userInfo}\n{request.query}"
+    rag_response = rag_chain(query=rag_query, doc_name=request.docName)
     print(rag_response)
+    # 문자열(JSON) -> dict
+    rag_response_dict = json.loads(rag_response)
+
+    # doc_ids -> docIds 매핑
+    rag_response_dict["docIds"] = rag_response_dict.pop("doc_ids")
+
+    # Pydantic 모델 생성
+    return ChatBotResponse(**rag_response_dict)
 
 
 if __name__ == "__main__":

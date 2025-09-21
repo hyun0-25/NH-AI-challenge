@@ -121,7 +121,7 @@ function FarmManage() {
         <header className="px-4 pt-3 pb-2 bg-white">
           <div className="flex items-center justify-between">
             <BackButton />
-            <h1 className="text-md font-semibold absolute left-1/2 transform -translate-x-1/2">내 영농/농장 관리</h1>
+            <h1 className="text-md font-medium absolute left-1/2 transform -translate-x-1/2">내 영농/농장 관리</h1>
             <div className="flex items-center gap-2">
               <button onClick={() => navigate('/')} className="w-5 h-5">
                 <img src="/src/images/home.png" alt="홈" className="w-full h-full object-contain" />

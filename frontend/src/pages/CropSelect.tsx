@@ -80,7 +80,7 @@ function CropSelect() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-5">
           <BackButton />
-          <h1 className="mt-3 text-[24px] font-semibold tracking-tight">
+          <h1 className="mt-3 text-md font-medium tracking-tight">
             <span className="text-[#4293A0]">작물</span>
             <span className="text-gray-900">을 선택해 주세요</span>
           </h1>
