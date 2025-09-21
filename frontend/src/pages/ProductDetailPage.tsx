@@ -187,7 +187,7 @@ function ProductDetailPage() {
           <div className="space-y-6 ">
             {/* Title */}
             <div className='px-2'>
-              <h2 className="text-lg font-bold text-[#4293A0] leading-relaxed">
+              <h2 className="text-xl font-bold text-[#4293A0] leading-relaxed">
                 {productDetail.productName}
               </h2>
               <p className="text-sm font-medium text-gray-700 mt-2 leading-relaxed">
