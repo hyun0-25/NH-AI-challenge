@@ -122,7 +122,7 @@ function PolicyDetailPage() {
             e.currentTarget.scrollTop += e.deltaY
           }}
         >
-          <div className="space-y-8 space-x-1">
+          <div className="space-y-8 space-x-1 pr-1">
             {/* Title */}
             <div>
               <h2 className="text-lg font-bold text-[#4293A0] leading-relaxed">

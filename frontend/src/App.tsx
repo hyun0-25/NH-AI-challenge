@@ -17,6 +17,9 @@ import InsuranceDetailPage from './pages/InsuranceDetailPage.tsx'
 import ChatbotPage from './pages/ChatbotPage.tsx'
 import LoadingPage from './pages/LoadingPage.tsx'
 import NotificationPage from './pages/NotificationPage.tsx'
+import NotificationListPage from './pages/NotificationListPage.tsx'
+import NotificationDetailPage from './pages/NotificationDetailPage.tsx'
+import NotificationDetailPage2 from './pages/NotificationDetailPage2.tsx'
 
 export type Crop = {
   id: string
@@ -134,6 +137,9 @@ function App() {
           <Route path="/chatbot" element={<ChatbotPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route path="/notification" element={<NotificationPage />} />
+          <Route path="/notification-list" element={<NotificationListPage />} />
+          <Route path="/notification-detail" element={<NotificationDetailPage />} />
+          <Route path="/notification-detail-2" element={<NotificationDetailPage2 />} />
         </Routes>
       </AppContext.Provider>
     </BrowserRouter>

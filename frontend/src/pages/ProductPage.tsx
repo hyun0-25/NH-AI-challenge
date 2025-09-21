@@ -232,7 +232,7 @@ function ProductPage() {
         {/* Introduction Text - only show when there are recommended products */}
         {recommendList.length > 0 && (
           <div className="px-4 py-3">
-            <p className="text-[#4293A0] text-sm leading-relaxed">
+            <p className="text-[#4293A0] text-[20px] font-bold leading-relaxed">
               김OO님의 현재 등록된 영농 정보에 맞춰 가입할 수 있는 금융상품을 추천드려요.
             </p>
           </div>
@@ -247,20 +247,20 @@ function ProductPage() {
           >
             {/* Recommended Products */}
             {recommendList.length > 0 ? (
-              <div className="mb-4">
+              <div className="mb-0">
                 {recommendList.map((product) => (
                     <div 
                       key={product.productId} 
                       className="bg-white p-4 border border-gray-100 mb-3 cursor-pointer hover:bg-gray-50"
                       onClick={() => navigate(`/product-detail/${product.productId}`)}
                     >
-                      <div className="flex items-start gap-3">
+                      <div className="flex items-center gap-3">
                         {/* Content */}
-                        <div className="flex-1">
-                          <h3 className="text-base font-semibold text-gray-900 mb-1">
+                        <div className="flex-1 ml-2">
+                          <h3 className="text-[15px] font-bold text-gray-900 mb-1">
                             {product.productName}
                           </h3>
-                          <p className="text-sm text-gray-600 line-clamp-2">
+                          <p className="text-[12px] text-gray-400 line-clamp-2">
                             {product.productFeature}
                           </p>
                         </div>
@@ -337,6 +337,8 @@ function ProductPage() {
             )}
 
             {/* Other Products Section */}
+            {/* 회색 영역 */}
+        <div className="mt-0 bg-gray-100 py-2 mb-3"></div>
             <div className="py-3">
               <h2 className="text-base font-semibold text-gray-700 mb-3 pl-4">다른 금융상품 보기</h2>
               

@@ -11,6 +11,7 @@ interface Message {
   summary?: string
   docIds?: number[]
   docName?: string
+  productDetails?: { id: number; name: string }[] // 각 docId에 해당하는 실제 상품 정보들
 }
 
 interface ChatResponse {
@@ -91,6 +92,37 @@ function ChatbotPage() {
     }
   }
 
+  const fetchProductDetails = async (docIds: number[], docName: string): Promise<{ id: number; name: string }[]> => {
+    const productDetails: { id: number; name: string }[] = []
+    
+    for (const docId of docIds) {
+      try {
+        let apiUrl = ''
+        if (docName === 'insurance') {
+          apiUrl = `/api/insurances/${docId}`
+        } else if (docName === 'policy') {
+          apiUrl = `/api/policies/${docId}`
+        } else if (docName === 'finance') {
+          apiUrl = `/api/products/${docId}`
+        }
+
+        const response = await fetch(apiUrl)
+        if (response.ok) {
+          const data = await response.json()
+          const productName = data.productName || data.insuranceName || data.policyName || '상품'
+          productDetails.push({ id: docId, name: productName })
+        } else {
+          productDetails.push({ id: docId, name: '상품' })
+        }
+      } catch (error) {
+        console.error(`Error fetching product ${docId}:`, error)
+        productDetails.push({ id: docId, name: '상품' })
+      }
+    }
+    
+    return productDetails
+  }
+
   const handleSendMessage = async () => {
     if (!inputText.trim()) return
 
@@ -119,6 +151,11 @@ function ChatbotPage() {
     setIsTyping(false)
 
     if (response) {
+      // 상품 정보 가져오기
+      const productDetails = response.docIds && response.docIds.length > 0 
+        ? await fetchProductDetails(response.docIds, docName)
+        : []
+
       const aiMessage: Message = {
         id: Date.now() + 1,
         type: 'ai',
@@ -126,7 +163,8 @@ function ChatbotPage() {
         timestamp: new Date(),
         summary: response.summary,
         docIds: response.docIds,
-        docName: docName
+        docName: docName,
+        productDetails: productDetails
       }
       setMessages(prev => [...prev, aiMessage])
     } else {
@@ -151,12 +189,24 @@ function ChatbotPage() {
     setMessages(prev => [...prev, userMessage])
     setIsTyping(true)
 
+    // 각 항목에 맞는 메시지 결정
+    let responseMessage = ''
+    if (question.includes('보험상품')) {
+      responseMessage = '보험상품에 관해 궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.'
+    } else if (question.includes('정부 지원정책')) {
+      responseMessage = '정부 지원정책에 관해 궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.'
+    } else if (question.includes('금융상품')) {
+      responseMessage = '금융상품에 관해 궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.'
+    } else {
+      responseMessage = '궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.'
+    }
+
     // 기본 멘트만 표시 (API 호출 없음)
     setTimeout(() => {
       const aiMessage: Message = {
         id: Date.now() + 1,
         type: 'ai',
-        content: '궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.',
+        content: responseMessage,
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage])
@@ -236,10 +286,10 @@ function ChatbotPage() {
                 }`}>
                   {message.type === 'ai' && message.id === 1 ? (
                     <div>
-                      <p className="text-md">
+                      <p className="text-[17px]">
                         <span className="text-[#4293A0] font-medium">김OO</span>님, 안녕하세요.
                       </p>
-                      <p className="text-md mt-1">무엇이 궁금하신가요?</p>
+                      <p className="text-[17px] mt-1">무엇이 궁금하신가요?</p>
                       
                       {/* Quick Question Buttons */}
                       <div className="mt-4 space-y-3">
@@ -286,29 +336,36 @@ function ChatbotPage() {
                     <div>
                       {message.summary && (
                         <>
-                          <p className="text-lg font-medium text-[#4293A0] mb-2">{message.summary}</p>
+                          <p className="text-[15px] font-medium text-[#4293A0] mb-2">{message.summary}</p>
                           <hr className="border-gray-200 mb-3" />
                         </>
                       )}
-                      <p className="text-sm text-gray-700 whitespace-pre-line">{message.content}</p>
+                      <p className="text-[12px] text-gray-500 whitespace-pre-line">{message.content}</p>
                       {message.docIds && message.docIds.length > 0 && (
-                        <button
-                          onClick={() => {
-                            const docId = message.docIds![0] // 첫 번째 docId 사용
-                            if (message.docName === 'insurance') {
-                              navigate(`/insurance-detail/${docId}`)
-                            } else if (message.docName === 'policy') {
-                              navigate(`/policy-detail/${docId}`)
-                            } else if (message.docName === 'finance') {
-                              navigate(`/product-detail/${docId}`)
-                            }
-                          }}
-                          className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-1 px-3 rounded transition-colors whitespace-pre-line"
-                        >
-                          {message.docName === 'insurance' && '농작물재해보험\n상세보기'}
-                          {message.docName === 'policy' && '스마트팜 지원정책\n상세보기'}
-                          {message.docName === 'finance' && '농업인 전용 대출\n상세보기'}
-                        </button>
+                        <div className="mt-3 space-y-2">
+                          {message.docIds.map((docId, index) => {
+                            const productDetail = message.productDetails?.find(p => p.id === docId)
+                            const productName = productDetail?.name || '상품'
+                            
+                            return (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  if (message.docName === 'insurance') {
+                                    navigate(`/insurance-detail/${docId}`)
+                                  } else if (message.docName === 'policy') {
+                                    navigate(`/policy-detail/${docId}`)
+                                  } else if (message.docName === 'finance') {
+                                    navigate(`/product-detail/${docId}`)
+                                  }
+                                }}
+                                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-1 px-3 rounded transition-colors whitespace-pre-line"
+                              >
+                                {`${productName}\n상세보기`}
+                              </button>
+                            )
+                          })}
+                        </div>
                       )}
                     </div>
                   )}
