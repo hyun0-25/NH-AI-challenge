@@ -15,8 +15,8 @@ function AddressInput() {
       <div className="w-full h-full bg-white mobile-safe-area flex flex-col">
         <header className="px-4 pt-3 pb-10">
           <BackButton />
-          <h1 className="text-md font-medium"><span className="text-[#4293A0]">농장주소</span>를 입력하면</h1>
-          <div className="text-[15px] text-gray-400">내 지역에 맞는 보조금을 알려드려요</div>
+          <h1 className="text-2xl pt-5"><span className="text-[#4293A0] font-bold">농장주소</span>를 입력하면</h1>
+          <div className="text-[18px] text-gray-400">내 지역에 맞는 보조금을 알려드려요</div>
         </header>
         <main className="px-4 space-y-5">
           <div className="space-y-2">

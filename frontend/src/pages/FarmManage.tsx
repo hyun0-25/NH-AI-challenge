@@ -245,8 +245,8 @@ function FarmManage() {
             <div className="bg-white rounded-2xl p-0 mx-0 w-full max-w-xs flex flex-col">
               {/* Warning Icon */}
               <div className="flex justify-center mb-6 pt-6">
-                <div className="w-10 h-10 bg-white-500 rounded-full ring-2 ring-[#4293A0] flex items-center justify-center">
-                  <span className="text-[#4293A0] text-xl font-bold">!</span>
+                <div className="w-10 h-10 bg-white-500 rounded-full ring-2 ring-red-500 flex items-center justify-center">
+                  <span className="text-red-500 text-xl font-bold">!</span>
                 </div>
               </div>
               

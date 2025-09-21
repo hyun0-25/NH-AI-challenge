@@ -156,7 +156,7 @@ function ChatbotPage() {
       const aiMessage: Message = {
         id: Date.now() + 1,
         type: 'ai',
-        content: '금융상품에 관해 궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.',
+        content: '궁금하신 점이 무엇인가요? 자유롭게 질문해주세요.',
         timestamp: new Date()
       }
       setMessages(prev => [...prev, aiMessage])
@@ -303,11 +303,11 @@ function ChatbotPage() {
                               navigate(`/product-detail/${docId}`)
                             }
                           }}
-                          className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-2 px-4 rounded-lg transition-colors"
+                          className="mt-3 w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium py-1 px-3 rounded transition-colors whitespace-pre-line"
                         >
-                          {message.docName === 'insurance' && '보험상품 상세 보기'}
-                          {message.docName === 'policy' && '정책 상세 보기'}
-                          {message.docName === 'finance' && '금융상품 상세 보기'}
+                          {message.docName === 'insurance' && '농작물재해보험\n상세보기'}
+                          {message.docName === 'policy' && '스마트팜 지원정책\n상세보기'}
+                          {message.docName === 'finance' && '농업인 전용 대출\n상세보기'}
                         </button>
                       )}
                     </div>
