@@ -1,13 +1,12 @@
 import sys
 import os
-
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
 from preprocessor.dataloader import select_table
-from schemas.recommend_schema import RecommendRequest, RecommendResponse
-import settings as settings
+import settings
 import os
 import json
 from typing import List, Dict
@@ -46,7 +45,7 @@ def recommend_product(doc_name: str, persorna_info: str) -> Dict[str, List[int]]
     # 테스트 질문
     query = f"{persorna_info}에게 상품을 추천해주세요."
     results = retriever.invoke(query)
-    print("response: ", results)
+
     # 결과를 딕셔너리로 변환
     result_dict = {f"recommendId": [result.metadata["doc_id"] for result in results]}
     print("response: ", result_dict)
