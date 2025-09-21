@@ -1,11 +1,15 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from chromadb.config import Settings
 from langchain_chroma import Chroma
 from typing import List, Dict, Any
 import os
 from langchain_openai import OpenAIEmbeddings
-from ..preprocessor import fotmmated_document
-import settings
+from preprocessor import fotmmated_document
+import app.settings as settings
 
 
 def create_vector_store(table_list: List[str], batch_size: int = 300) -> int:

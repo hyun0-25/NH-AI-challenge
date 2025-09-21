@@ -1,6 +1,10 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pandas as pd
 from langchain_core.documents import Document
-from ..preprocessor import select_table
+from preprocessor import select_table
 
 
 def fotmmated_document(table_name: str) -> str:
@@ -82,6 +86,9 @@ def _combine_text_fields(row: pd.Series, table_name: str) -> str:
     elif table_name == "insurance":
         return f"""
 보험 번호: {row.get('insurance_id', '')}
+보험명: {row.get('insurance_name', '')}
+보험명 세부: {row.get('insurance_sub_name', '')}
+보험 설명: {row.get('insurance_description', '')}
 약관: {row.get('insurance_condition_type', '')}
 보장: {row.get('insurance_coverage', '')}
 보상재해: {row.get('insurance_disaster', '')}

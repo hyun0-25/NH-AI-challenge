@@ -1,5 +1,10 @@
+import sys
+import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import pandas as pd
-from ..utils import mysql_client, INSERT_QUERY_FINANCE_TABLE
+from utils import mysql_client, INSERT_QUERY_FINANCE_TABLE
 
 
 def insert_finance_data(file_path: str) -> None:

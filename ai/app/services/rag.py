@@ -1,11 +1,15 @@
+import sys
 import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import click
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-import settings
+import app.settings as settings
+
 
 def rag_chain(query: str, doc_name: str):
     """
@@ -17,14 +21,18 @@ def rag_chain(query: str, doc_name: str):
 
     Returns:
         results: 사용자 질문에 대한 rag 답변
-    
+
     Example:
         rag_chain("청년 농부에게 추천할 금융 상품을 알려주세요", "finance")
         >>> {"summary": "응답 한 문장 요약", "response": "질문에 대한 근거 포함 대답 내용", "doc_ids": [doc_ids]}
     """
-    
+
     # LLM 설정
-    llm = ChatOpenAI(model=settings.OPENAI_LLM_MODEL, temperature=settings.TEMPERATURE, max_tokens=settings.MAX_TOKENS)
+    llm = ChatOpenAI(
+        model=settings.OPENAI_LLM_MODEL,
+        temperature=settings.TEMPERATURE,
+        max_tokens=settings.MAX_TOKENS,
+    )
 
     template = """질문에 해당하는 내용을 context를 기반으로 근거를 담아 답변해주세요. 질문을 답할 수 없는 경우는 친절하게 안내 방법을 제시해주세요. 답변은 summary와 response로 나누어 출력해주세요. 
 
@@ -43,13 +51,14 @@ def rag_chain(query: str, doc_name: str):
     prompt = ChatPromptTemplate.from_template(template)
 
     def retriever(query: str, doc_name: str):
-        embeddings = OpenAIEmbeddings(model=settings.EMBEDDING_MODEL,
-            api_key=settings.OPENAI_API_KEY)
+        embeddings = OpenAIEmbeddings(
+            model=settings.EMBEDDING_MODEL, api_key=settings.OPENAI_API_KEY
+        )
 
         # 벡터 저장소 로드
         vector_store = Chroma(
             collection_name=settings.CHROMA_COLLECTION_NAME,
-            persist_directory=settings.CHROMA_DB_DIR, 
+            persist_directory=settings.CHROMA_DB_DIR,
             embedding_function=embeddings,
         )
 
@@ -59,35 +68,24 @@ def rag_chain(query: str, doc_name: str):
         )
 
         results = retriever.invoke(query)
-        doc_ids = [result.metadata['doc_id'] for result in results]
+        doc_ids = [result.metadata["doc_id"] for result in results]
 
         context = ""
         for result in results:
             context += result.page_content
             context += "\n\n"
-            
+
         input = {"context": context, "question": query, "doc_ids": doc_ids}
         return input
 
     # RAG 체인: 쿼리 → 문서 검색 → 프롬프트 → LLM → 출력 파서
-    rag_chain = (
-        retriever
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
+    rag_chain = retriever | prompt | llm | StrOutputParser()
 
     # 체인 실행
     output = rag_chain.invoke(query, doc_name=doc_name)
     return output
 
 
-@click.command()
-@click.option('--query', '-q', required=True, help='사용자 질문')
-@click.option('--doc-name', '-d', required=True,
-              type=click.Choice(['finance', 'policy', 'insurance']),
-              help='문서 이름 (finance/policy/insurance)')
-@click.option('--persona-info', '-p', required=True, help='사용자 정보')
 def main(query: str, doc_name: str, persona_info: str):
     """RAG 체인을 실행하여 질문에 대한 답변을 생성합니다."""
     rag_query = f"{persona_info}\n{query}"
