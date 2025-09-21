@@ -1,14 +1,19 @@
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add the parent directory to sys.path to enable absolute imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+app_dir = os.path.dirname(parent_dir)
+if app_dir not in sys.path:
+    sys.path.insert(0, app_dir)
+
 import pandas as pd
 from chromadb.config import Settings
 from langchain_chroma import Chroma
 from typing import List, Dict, Any
-import os
 from langchain_openai import OpenAIEmbeddings
-from preprocessor import fotmmated_document
+from app.preprocessor.preprocess import fotmmated_document
 import app.settings as settings
 
 
