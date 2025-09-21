@@ -1,8 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 from preprocessor.dataloader import select_table
 import settings
-import os
 import json
 from typing import List, Dict
 import click
@@ -39,7 +42,7 @@ def recommend_product(doc_name: str, persorna_info: str = "30대 청년 농부")
     query = f"{persorna_info}에게 상품을 추천해주세요."
 
     results = retriever.invoke(query)
-
+    
     # 결과를 딕셔너리로 변환
     result_dict = {f"{doc_name}_id" : [result.metadata['doc_id'] for result in results]}
 
