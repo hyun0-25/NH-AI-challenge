@@ -2,6 +2,8 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from schemas.recommend_schema import RecommendRequest, RecommendResponse
+
 from langchain_chroma import Chroma
 from langchain_openai import OpenAIEmbeddings
 
@@ -36,7 +38,7 @@ def recommend_product(doc_name: str, persorna_info: str) -> Dict[str, List[int]]
         embedding_function=embeddings,
     )
 
-    print(vector_store._collection.count())
+    print("vector_store 문서 수: ", vector_store._collection.count())
     # 검색기 생성 - 유사도 기반 상위 3개 문서 검색
     retriever = vector_store.as_retriever(
         search_kwargs={"k": 3, "filter": {"doc_name": f"{doc_name}"}},

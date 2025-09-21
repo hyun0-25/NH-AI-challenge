@@ -8,7 +8,7 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-import app.settings as settings
+import settings as settings
 
 
 def rag_chain(query: str, doc_name: str):
@@ -94,4 +94,4 @@ def main(query: str, doc_name: str, persona_info: str):
 
 
 if __name__ == "__main__":
-    main()
+    main(query="청년 농부에게 추천할 금융 상품을 알려주세요", doc_name="finance", persona_info="1995년생 청년 농부")
