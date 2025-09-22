@@ -37,39 +37,45 @@
 
 ## 🎬 기능 동작 화면
 ### 1. 농장 정보 등록
-<img src="https://github.com/user-attachments/assets/bd252ccd-f54a-4936-ab7c-dc0ada7bf112" width="250" style="border-radius:15px;"/>
+<p align="left">농장 위치 & 유형 -> 작물 품종선택 -> 등록 완료</p>
+<img src="https://github.com/user-attachments/assets/7ef4617e-7171-4926-a6e3-289ee02d528c" width="200" style="border-radius:15px;"/>
 
 ### 2. 내 영농/농장 삭제
-<img src="https://github.com/user-attachments/assets/dba35151-5c78-4ed2-a9ab-4070eece2d95" width="250" style="border-radius:15px;"/>
+<p align="left">내 영농/농장 리스트 -> 농장 삭제</p>
+<img src="https://github.com/user-attachments/assets/0c8e986a-e3e2-4c89-8118-0059952f86b0" width="200" style="border-radius:15px;"/>
 
 ### 3. 추천 금융·보험·정책 리스트
+농장별 작물 택1 -> 추천 버튼 클릭 -> RAG기반 상위 3개 추천 & 이외 최신 리스트
 <table>
   <tr>
-    <td align="center"><b>정책</b></td>
-    <td align="center"><b>보험</b></td>
     <td align="center"><b>금융</b></td>
+    <td align="center"><b>보험</b></td>
+    <td align="center"><b>정책</b></td>
   </tr>
   <tr>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/a22c2daa-d785-44cb-a1b5-5e37c2d1bc78" width="250" style="border-radius:15px;"/>
+      <img src="https://github.com/user-attachments/assets/d1b7f60b-7629-4257-b2c9-c1f9e76fd401" width="200" style="border-radius:15px;"/>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/c4529643-3d8e-4d57-aed8-f692fe3f64d5" width="250" style="border-radius:15px;"/>
+      <img src="https://github.com/user-attachments/assets/a515933f-ed2c-49ad-89b3-f1e1c431d8e5" width="200" style="border-radius:15px;"/>
     </td>
     <td align="center">
-      <img src="https://github.com/user-attachments/assets/4b2f1e9e-8695-4663-805c-ae3348e56c5f" width="250" style="border-radius:15px;"/>
+      <img src="https://github.com/user-attachments/assets/7d0c1a8d-d132-4589-bd8e-705eba02f6cf" width="200" style="border-radius:15px;"/>
     </td>
   </tr>
 </table>
 
 ### 4. AI 챗봇 상담
-<img src="https://github.com/user-attachments/assets/7cdf7bbe-fc82-47c4-9bde-a158bccab781" width="250" style="border-radius:15px;"/>
+<p align="left">농장별 작물 택1 -> AI 챗봇 상담 버튼 클릭 -> 상담 영역 선택 -> 사용자 질의 -> RAG기반 LLM 응답 생성</p>
+<img src="https://github.com/user-attachments/assets/3399448b-a1db-4b77-b0e7-beb117e00285" width="200" style="border-radius:15px;"/>
 
 
 ### 5. 맞춤 푸시 알리미
-<img src="https://github.com/user-attachments/assets/89817175-8fbe-4022-a766-7832511f70e2" width="250" style="border-radius:15px;"/>
+<p align="left">(재해 발생, 맞춤 정책/금융상품 업데이트 -> 고객 정보 기반 알림 생성) => 푸시알림 수신 -> 알림 내역 -> 세부내용 조회</p>
+<img src="https://github.com/user-attachments/assets/cc43d688-bec3-4f69-b6b3-419d2aa172ba" width="200" style="border-radius:15px;"/>
 
-
+<br>
+<br>
 
 ## 🛠 기술 스택
 | 구분 | 기술 |
@@ -80,6 +86,7 @@
 | **데이터베이스** | MySQL, VectorDB |
 | **AI/ML** | RAG 기반 LLM, OpenAI API, LangChain |
 
+<br>
 
 ## ⚡ 설치 및 실행 방법
 ### 1. Frontend
